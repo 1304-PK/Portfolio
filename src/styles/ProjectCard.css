@@ -1,89 +1,150 @@
-* {
-  padding: 0;
-  margin: 0;
-  box-sizing: border-box;
-}
-
-.card-container {
-  perspective: 1000px;
+.project-card {
+  background-color: #ffffff;
+  border: 3px solid #000000;
+  max-width: 400px;
+  width: 100%;
+  box-shadow: 3px 3px 0px #000000;
+  transition: box-shadow 0.3s ease;
   cursor: pointer;
-  width: 500px;
-  height: 450px;
-  margin: 20px;
-}
-
-.card-inner {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-  transform-style: preserve-3d;
-}
-
-.card-inner.is-flipped {
-  transform: rotateY(180deg);
-}
-
-.card-face {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-  border-radius: 12px;
-  overflow: hidden;
-  font-family: sans-serif;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-}
-
-.card-front {
-  /* background-color: #0f0f0f; */
-  background-image: url("../assets/blob-scene-haikei\(3\).svg");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  font-family: "Cormorant Garamond";
-  /* color: var(--primary-color); */
-  color: white;
-  font-size: 2rem;
-  border: 2px solid #df6400;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.card-back {
-  border: 2px solid var(--primary-color);
-  background-color: #272727;
-  color: white;
-  transform: rotateY(180deg);
+  font-family: var(--font-family);
   display: flex;
   flex-direction: column;
 }
 
-.project-img {
-  width: 100%;
-  height: 250px;
-  object-fit: cover;
+.project-card:hover {
+  box-shadow: 8px 8px 0px #000000;
 }
 
-.project-details {
-  padding: 20px;
+.project-card_image-wrapper {
+  width: 100%;
+  height: 240px;
+  overflow: hidden;
+  border-bottom: 3px solid #000000;
+  position: relative;
+  background-color: #f5f5f5;
+}
+
+.project-card_image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.project-card_content {
+  flex: 1;
+  padding: 1.5rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 10px;
-  flex-grow: 1;
+  gap: 1rem;
 }
 
-.project-title{
-  color: var(--primary-color);
+.project-card_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
 }
 
-.github-link {
-  color: #ffffff7d;
-  font-weight: bold;
+.project-card_title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #000000;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  line-height: 1.2;
+}
+
+.project-card_link {
+  box-shadow: var(--box-shadow);
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  background-color: var(--green-shade);
+  border: 2px solid #000000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
   text-decoration: none;
+}
+
+.project-card_link:hover {
+  background-color: #000000;
+  box-shadow: none;
+}
+
+.project-card_link:hover .project-card_arrow {
+  stroke: #00ff00;
+}
+
+.project-card_arrow {
+  width: 20px;
+  height: 20px;
+  stroke: #000000;
+  transition: stroke 0.3s ease;
+}
+
+.project-card_description {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: black;
+  margin: 0;
+}
+
+.project-card_tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.project-card_tag {
+  background-color: #000000;
+  color: #ffffff;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: 2px solid #000000;
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+  .project-card {
+    max-width: 100%;
+  }
+
+  .project-card_image-wrapper {
+    height: 200px;
+  }
+
+  .project-card_content {
+    padding: 1.25rem;
+  }
+
+  .project-card_title {
+    font-size: 1.25rem;
+  }
+
+  .project-card_link {
+    width: 32px;
+    height: 32px;
+  }
+
+  .project-card_arrow {
+    width: 18px;
+    height: 18px;
+  }
+
+  .project-card_description {
+    font-size: 0.85rem;
+  }
+
+  .project-card_tag {
+    font-size: 0.7rem;
+    padding: 0.35rem 0.7rem;
+  }
 }
