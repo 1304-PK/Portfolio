@@ -1,30 +1,29 @@
-import React, { useState } from 'react';
-import '../styles/ProjectCard.css';
+import "../styles/ProjectCard.css"
 
-const ProjectCard = ({title, image, description, link}) => {
-  const [isFlipped, setIsFlipped] = useState(false);
-
-  const handleFlip = () => {
-    setIsFlipped(!isFlipped);
-  };
-
+const ProjectCard = ({ image, title, description, tags, link }) => {
   return (
-    <div className="card-container" onClick={handleFlip}>
-      <div className={`card-inner ${isFlipped ? 'is-flipped' : ''}`}>
-  
-        <div className="card-face card-front">
-          <h2>{title}</h2>
+    <div className="project-card">
+      <div className="project-card_image-wrapper">
+        <img src={image} alt={title} className="project-card_image" />
+      </div>
+      
+      <div className="project-card_content">
+        <div className="project-card_header">
+          <h3 className="project-card_title">{title}</h3>
+          <a href={link} className="project-card_link" target="_blank" rel="noopener noreferrer">
+            <svg className="project-card_arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M7 17L17 7M17 7H7M17 7V17" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </a>
         </div>
-
-        <div className="card-face card-back">
-          <img className='project-img' src={image} alt="" />
-          <div className="project-details">
-            <h1 className="project-title">{title}</h1>
-            <p className="project-description">{description}</p>
-            <p><a href={link} target='_blank' className="github-link">Github</a></p>
-          </div>
+        
+        <p className="project-card_description">{description}</p>
+        
+        <div className="project-card_tags">
+          {tags.map((tag, index) => (
+            <span key={index} className="project-card_tag">{tag}</span>
+          ))} 
         </div>
-
       </div>
     </div>
   );
