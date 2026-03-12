@@ -3,8 +3,6 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './Portfolio.jsx'
 
-
-
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <App />
