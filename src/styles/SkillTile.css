@@ -40,3 +40,8 @@
     opacity: 1;
     transform: translateY(0px);
 }
+
+.skill-tile img{
+    height: min(50px, 10vw);
+    width: min(50px, 10vw);
+}

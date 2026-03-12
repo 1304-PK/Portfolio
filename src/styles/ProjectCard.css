@@ -9,6 +9,7 @@
   border-radius: 20px;
   border: 1px solid transparent;
   box-shadow: 5px 5px 0px 0px rgba(255, 255, 255, 0.186);
+  width: 100%;
   max-width: 500px;
   transition: all 300ms ease;
   cursor: pointer;
@@ -19,7 +20,8 @@
 }
 
 .project-img {
-  max-width: 500px;
+  width: 100%;
+  height: auto;
   filter: grayscale(100%);
   transition: all 300ms ease;
 }
