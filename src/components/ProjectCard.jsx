@@ -1,32 +1,28 @@
 import "../styles/ProjectCard.css"
 
-const ProjectCard = ({ image, title, description, tags, link }) => {
+const ProjectCard = ({ image, title, liveUrl, githubUrl, description, techStack }) => {
   return (
     <div className="project-card">
-      <div className="project-card_image-wrapper">
-        <img src={image} alt={title} className="project-card_image" />
-      </div>
-      
-      <div className="project-card_content">
-        <div className="project-card_header">
-          <h3 className="project-card_title">{title}</h3>
-          <a href={link} className="project-card_link" target="_blank" rel="noopener noreferrer">
-            <svg className="project-card_arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <path d="M7 17L17 7M17 7H7M17 7V17" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </a>
+      <div className="project-img-wrapper"><img src={image} alt="" className="project-img" /></div>
+      <div className="project-details">
+        <div className="details-header">
+          <h1 className="project-title">{title}</h1>
+          <div className="project-links">
+            <a className="project-live-link" href={liveUrl}>Live</a>
+            <a className="project-github-link" href={githubUrl} >Github</a>
+          </div>
         </div>
-        
-        <p className="project-card_description">{description}</p>
-        
-        <div className="project-card_tags">
-          {tags.map((tag, index) => (
-            <span key={index} className="project-card_tag">{tag}</span>
-          ))} 
+        <p className="project-description">{description}</p>
+        <div className="project-tech-stack">
+          {techStack.map((item, index) => {
+            return (
+              <div className="project-tech-stack-item" key={index}>{item}</div>
+            )
+          })}
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default ProjectCard;
+export default ProjectCard
