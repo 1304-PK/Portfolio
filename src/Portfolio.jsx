@@ -55,7 +55,8 @@ const SKILLS = [
   { image: postgresql, title: "Postgresql" },
   { image: git, title: "Git" }
 ]
-const RADIUS = 300
+const CONTAINER_SIZE = Math.min(window.innerWidth*0.8, 600)
+const RADIUS = CONTAINER_SIZE/2
 const ITEM_SIZE = 50
 
 const Portfolio = () => {
@@ -137,16 +138,13 @@ const Portfolio = () => {
         <h1 className="section-title">SKILL SET</h1>
 
         <div className="skills-container">
-          <div className="rotating-circle" style={{
-            height: RADIUS * 2,
-            width: RADIUS * 2
-          }}>
+          <div className="rotating-circle">
             {SKILLS.map((item, index) => {
               const angle = (index * (360 / SKILLS.length)) * (Math.PI / 180)
-              const posX = RADIUS + (RADIUS * Math.sin(angle))
-              const posY = RADIUS - (RADIUS * Math.cos(angle))
+              const posX = 50 + (50 * Math.sin(angle))
+              const posY = 50 - (50 * Math.cos(angle))
               return (
-                <SkillTile key={index} top={posY} left={posX} height={ITEM_SIZE} width={ITEM_SIZE} image={item.image} title={item.title} />
+                <SkillTile key={index} top={`${posY}%`} left={`${posX}%`} image={item.image} title={item.title} />
               )
             })}
           </div>
@@ -174,8 +172,8 @@ const Portfolio = () => {
 
       {/* CONTACT SECTION */}
       <div className="contact-section section">
-        <h1>IF YOU'VE SCROLLED THIS FAR...</h1>
-        <h1>LET'S TALK</h1>
+        <h1 className="contact-section-heading">IF YOU'VE SCROLLED THIS FAR...</h1>
+        <h1 className="contact-section-heading">LET'S TALK</h1>
 
         <div className="contact-icons-section">
           <FaGithub className="contact-icons" size={40} />
