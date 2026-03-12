@@ -1,330 +1,195 @@
-import './styles/Portfolio.css';
-import ProjectCard from './components/ProjectCard';
+import "./styles/Portfolio.css"
+import Snowfall from "react-snowfall";
+
+// IMPORT ICONS
+import cpp from "./assets/icons/cpp.svg";
+import express from "./assets/icons/express.png";
+import github from "./assets/icons/github.png";
+import nodejs from "./assets/icons/nodejs.svg";
+import python from "./assets/icons/python.svg";
+import react from "./assets/icons/react.svg";
+import tailwind from "./assets/icons/tailwind.svg";
+import postgresql from "./assets/icons/postgresql.svg"
+import mongodb from "./assets/icons/mongodb.svg"
+import git from "./assets/icons/git.svg"
+import { FaGithub } from "react-icons/fa";
+import { FaLinkedin } from "react-icons/fa";
+import { FaTwitter } from "react-icons/fa";
+
+// IMPORT COMPONENTS
+import ProjectCard from "./components/ProjectCard";
+import SkillTile from "./components/SkillTile";
+
+// IMPORT IMAGES
+import civic_care from "./assets/civic_care.png"
 import ytstack from "./assets/ytstack.png"
-import civiccare from "./assets/civic_care.png"
+
+const PROJECTS = [
+  {
+    image: civic_care,
+    title: "Civic Care",
+    liveUrl: "dummy",
+    githubUrl: "dummy",
+    description: "this is an apt description for this project",
+    techStack: ["React", "Node", "Express", "MySQL"]
+  },
+  {
+    image: ytstack,
+    title: "YT Stack",
+    liveUrl: "dummy",
+    githubUrl: "dummy",
+    description: "this is an apt description for this project",
+    techStack: ["React", "Node", "Express", "MySQL"]
+  }
+]
+
+const SKILLS = [
+  { image: cpp, title: "Cpp" },
+  { image: express, title: "Express" },
+  { image: github, title: "Github" },
+  { image: nodejs, title: "Nodejs" },
+  { image: python, title: "Python" },
+  { image: react, title: "React" },
+  { image: mongodb, title: "Mongodb" },
+  { image: tailwind, title: "Tailwind" },
+  { image: postgresql, title: "Postgresql" },
+  { image: git, title: "Git" }
+]
+const RADIUS = 300
+const ITEM_SIZE = 50
 
 const Portfolio = () => {
 
-  const Projects = [
-    {
-      title: "Civic Care",
-      description: "Full Stack website that lets user issue complaints to the responsible officer and track the status",
-      img: civiccare,
-      tags: ["REACT", "EXPRESS", "MYSQL"],
-      link: ""
-    },
-    {
-      title: "YT Stack",
-      description: "A website for a niche community that let's you embed youtube videos play them simultaneously with the press of a single button",
-      img: ytstack,
-      tags: ["HTML", "CSS", "JS"],
-      link: "https://www.yt-stack.vercel.app"
-    },
-    {
-      title: "KORTEX",
-      description: "AI Based course flow generator which generates course plan based on user's query with relevant lectures and let's the user track progress and make notes",
-      imge: "",
-      tags: ["REACT", "TAILWIND", "EXPRESS", "SUPABASE", "GROQ API"],
-      link: ""
-    }
-  ]
-
-  const handleSubmit = (e) => {
-    e.preventDefault()
-  }
-
   return (
-    <div className="portfolio-container">
-      <nav className="navbar">
-        <div className="nav-left">
-          <div className="logo">PUSHKAR</div>
-        </div>
-        <div className="nav-right">
-          <a href="#about">/ABOUT</a>
-          <a href="#skills">/SKILLS</a>
-          <a href="#logs">/LOGS</a>
-          <a href="#work">/WORK</a>
-          <button className="hire-btn">HIRE ME</button>
-        </div>
-      </nav>
-
+    <div id='portfolio-container'>
+      <Snowfall style={{
+        position: "fixed"
+      }} />
       {/* HERO SECTION */}
-      <div className="hero-section">
-        <div className="status-indicator">
-          <span className="status-text">HEY, ITS</span>
-        </div>
+      <div className="hero">
+        <div className="hero_tag">Hi, I am</div>
 
-        <div className="hero-content">
-          <div className="blue-square"></div>
+        <h1 className="hero_name">PUSHKAR</h1>
 
-          <div className="main-text">
-            <h1 className="title-solid">PUSHKAR</h1>
-            {/* <h1 className="title-outline">PUSHKAR</h1> */}
+        <p className="hero_role">
+          <span className="hero_role-line" />
+          COMPUTER SCIENCE ENGINEER
+          <span className="hero_role-line" />
+        </p>
 
-            <div className="tagline-box">
-              <p className="tagline">
-                I build digital products that refuse to be<br />
-                boring.<br />
-                <span className="tech-stack">Full Stack • Machine Learning • AI</span>
-              </p>
-            </div>
-          </div>
+        <div className="hero_socials">
+          {/* GitHub */}
+          <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="hero_social-link" aria-label="GitHub">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 
+          0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.385-1.335-1.755-1.335-1.755
+          -1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 
+          3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 
+          0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 
+          3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 
+          3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 
+          1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 
+          0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 21.795 
+          24 17.295 24 12c0-6.63-5.37-12-12-12z"/>
+            </svg>
+          </a>
 
-          <div className="pink-circle"></div>
-        </div>
+          {/* LinkedIn */}
+          <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="hero_social-link" aria-label="LinkedIn">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037
+          -1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046
+          c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 
+          7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 
+          13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542
+          C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729
+          C24 .774 23.2 0 22.222 0h.003z"/>
+            </svg>
+          </a>
 
-        <div className="cta-buttons">
-          <button className="btn-primary">VIEW DATABASE</button>
-          <button className="btn-secondary">DOWNLOAD CV
-          </button>
-        </div>
-      </div>
-
-      {/* MOVING BAR */}
-      <div className='moving-bar'>
-        <span className='moving-text'>HTML • CSS • Tailwind • JavaScript • React • Express • NodeJs • Python • Pandas</span>
-        <span className='moving-text'>HTML • CSS • Tailwind • JavaScript • React • Express • NodeJs • Python • Pandas</span>
-      </div>
-
-      {/* INTRODUCTION SECTION */}
-
-      <section className="introduction-section">
-        <div className="introduction-container">
-          <div className="introduction-content">
-            <div className="introduction-image">
-              <img src="https://4kwallpapers.com/images/wallpapers/iron-man-action-2048x2048-13389.jpg" alt="ProfileImg" />
-            </div>
-
-            <div className="introduction-text">
-              <h1 className="introduction-title">WHO AM I?</h1>
-              <p className="introduction-description">
-                I am Pushkar. A computer science student with interest in full stack development and AI, engineering solutions centered around efficiency and scalability with a touch of <span className="highlight-text">creativity</span>.
-              </p>
-
-              <ul className="introduction-features">
-                <li>&gt; Specialized in Designing and Web Development.</li>
-                <li>&gt; Obsessed with Perfection and AI.</li>
-                <li>&gt; 3+ years of shipping code that works.</li>
-              </ul>
-
-              <div className="introduction-buttons">
-                <button className="introduction-btn location-btn">
-                  📍 LOCATION: EARTH
-                </button>
-                <button className="introduction-btn status-btn">
-                  STATUS: AVAILABLE
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* TECH STACK SECTION */}
-
-      <section className="ts_section">
-        <div className="ts_container">
-          <div className="ts_header">
-            <h2 className="ts_title">
-              <span className="ts_title_white">TECH</span>
-              <span className="ts_title_green">_STACK</span>
-            </h2>
-          </div>
-
-          <div className="ts_grid">
-            <div className="ts_card">
-              <span className="ts_card_label">FRONTEND</span>
-              <span className="ts_card_tech">REACT</span>
-            </div>
-
-            <div className="ts_card">
-              <span className="ts_card_label">FRAMEWORK</span>
-              <span className="ts_card_tech">NEXT.JS</span>
-            </div>
-
-            <div className="ts_card">
-              <span className="ts_card_label">LANGUAGE</span>
-              <span className="ts_card_tech">PYTHON</span>
-            </div>
-
-            <div className="ts_card">
-              <span className="ts_card_label">RUNTIME</span>
-              <span className="ts_card_tech">NODE.JS</span>
-            </div>
-
-            <div className="ts_card">
-              <span className="ts_card_label">STYLING</span>
-              <span className="ts_card_tech">TAILWIND</span>
-            </div>
-
-            <div className="ts_card">
-              <span className="ts_card_label">DATABASE</span>
-              <span className="ts_card_tech">MYSQL</span>
-            </div>
-
-            <div className="ts_card">
-              <span className="ts_card_label">MARKUP</span>
-              <span className="ts_card_tech">HTML5</span>
-            </div>
-
-            <div className="ts_card">
-              <span className="ts_card_label">VERSION</span>
-              <span className="ts_card_tech">GIT</span>
-            </div>
-
-            <div className="ts_card">
-              <span className="ts_card_label">API</span>
-              <span className="ts_card_tech">GRAPHQL</span>
-            </div>
-
-            <div className="ts_card">
-              <span className="ts_card_label">PLATFORM</span>
-              <span className="ts_card_tech">GITHUB</span>
-            </div>
-
-            <div className="ts_card">
-              <span className="ts_card_label">LANGUAGE</span>
-              <span className="ts_card_tech">JAVA</span>
-            </div>
-
-            <div className="ts_card">
-              <span className="ts_card_label">FRAMEWORK</span>
-              <span className="ts_card_tech">DJANGO</span>
-            </div>
-
-            <div className="ts_card">
-              <span className="ts_card_label">BACKEND</span>
-              <span className="ts_card_tech">PHP</span>
-            </div>
-
-            <div className="ts_card">
-              <span className="ts_card_label">FRAMEWORK</span>
-              <span className="ts_card_tech">LARAVEL</span>
-            </div>
-
-            <div className="ts_card">
-              <span className="ts_card_label">LIBRARY</span>
-              <span className="ts_card_tech">THREE.JS</span>
-            </div>
-
-            <div className="ts_card">
-              <span className="ts_card_label">LANGUAGE</span>
-              <span className="ts_card_tech">C++</span>
-            </div>
-          </div>
-
-          <div className="ts_footer"></div>
-        </div>
-      </section>
-
-      {/* PROJECTS SECTION */}
-
-      <section className="projects-section">
-        <div className="projects-container">
-          <h2 className="projects-title">SELECTED WORKS</h2>
-
-          <div className="projects-grid">
-            {/* <ProjectCard image={"https://i.ytimg.com/vi/I4n19j0cd9U/maxresdefault.jpg"} title={"Project 1"} description="Hey hello hi hi hi hi hi hi hi hi hi hi hi hi hi" link={"https://www.youtube.com/"} tags={["HTML", "JS", "CSS"]} /> */}
-            {
-              Projects.map((project, index) => {
-                return(
-                  <ProjectCard 
-                  image={project.img}
-                  title={project.title}
-                  description={project.description}
-                  link={project.link}
-                  tags={project.tags}
-                  />
-                )
-              })
-            }
-          </div>
-
-          <a href="https://github.com/1304-PK" target="_blank" rel="noopener noreferrer" className="projects-github-link">
-            GITHUB
+          {/* X (Twitter) */}
+          <a href="https://x.com" target="_blank" rel="noopener noreferrer" className="hero_social-link" aria-label="X">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231
+          -5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.253 5.622L18.244 
+          2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/>
+            </svg>
           </a>
         </div>
-      </section>
 
-      {/* CONTACT SECTION */}
+        <p className="hero_bio">
+          I build <span className="hero-bio-highlight">robust</span> systems and <span className="hero-bio-highlight">elegant</span> interfaces that live at the intersection of
+          performance and craft. Currently focused on full-stack development, developer
+          tooling, and anything that makes engineers more productive with a touch of <span className="hero-bio-highlight">creativity</span>. Open to new
+          opportunities and interesting problems.
+        </p>
 
-      <section className="contact-section">
-        <div className="contact-container">
-          <div className="contact-badge">CONTACT ME</div>
+        <a href="/resume.pdf" target="_blank" rel="noopener noreferrer" className="hero_resume-btn">
+          Resume
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+            <path d="M5 12h14M12 5l7 7-7 7" />
+          </svg>
+        </a>
+      </div>
 
-          <div className="contact-content">
-            <div className="contact-left">
-              <h2 className="contact-title">
-                LET'S<br />
-                CONNECT
-              </h2>
+      {/* SKILLS SECTION */}
+      <div className="skills-section section">
+        <h1 className="section-title">SKILL SET</h1>
 
-              <p className="contact-availability">
-                <span className="contact-bullet"></span>
-                Open for freelance work and full-time opportunities.
-              </p>
-
-              <div className="contact-info">
-                <div className="contact-info-item">
-                  <div className="contact-icon">
-                    <svg viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
-                    </svg>
-                  </div>
-                  <span>pushkar@gmail.com</span>
-                </div>
-
-                <div className="contact-info-item">
-                  <div className="contact-icon">
-                    <svg viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
-                    </svg>
-                  </div>
-                  <span>PLANET EARTH</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="contact-right">
-              <form className="contact-form" onSubmit={handleSubmit}>
-                <div className="contact-form-group">
-                  <label className="contact-label">NAME</label>
-                  <input
-                    type="text"
-                    className="contact-input"
-                    placeholder="NAME / COMPANY"
-                  />
-                </div>
-
-                <div className="contact-form-group">
-                  <label className="contact-label">EMAIL</label>
-                  <input
-                    type="email"
-                    className="contact-input"
-                    placeholder="EMAIL ADDRESS"
-                  />
-                </div>
-
-                <div className="contact-form-group">
-                  <label className="contact-label">MESSAGE</label>
-                  <textarea
-                    className="contact-textarea"
-                    placeholder="MESSAGE..."
-                    rows="5"
-                  ></textarea>
-                </div>
-
-                <button type="submit" className="contact-submit">
-                  TRANSMIT DATA
-                </button>
-              </form>
-            </div>
+        <div className="skills-container">
+          <div className="rotating-circle" style={{
+            height: RADIUS * 2,
+            width: RADIUS * 2
+          }}>
+            {SKILLS.map((item, index) => {
+              const angle = (index * (360 / SKILLS.length)) * (Math.PI / 180)
+              const posX = RADIUS + (RADIUS * Math.sin(angle))
+              const posY = RADIUS - (RADIUS * Math.cos(angle))
+              return (
+                <SkillTile key={index} top={posY} left={posX} height={ITEM_SIZE} width={ITEM_SIZE} image={item.image} title={item.title} />
+              )
+            })}
           </div>
         </div>
-      </section>
+      </div>
 
+      {/* PROJECTS SECTION */}
+      <div className="projects-section section">
+        <h1 className="section-title">PROJECTS</h1>
+        <div className="projects-container">
+          {PROJECTS.map((item, index) => {
+            return (
+              <ProjectCard
+                image={item.image}
+                title={item.title}
+                liveUrl={item.liveUrl}
+                githubUrl={item.githubUrl}
+                description={item.description}
+                techStack={item.techStack}
+              />
+            )
+          })}
+        </div>
+      </div>
+
+      {/* CONTACT SECTION */}
+      <div className="contact-section section">
+        <h1>IF YOU'VE SCROLLED THIS FAR...</h1>
+        <h1>LET'S TALK</h1>
+
+        <div className="contact-icons-section">
+          <FaGithub className="contact-icons" size={40} />
+          <FaLinkedin className="contact-icons" size={40} />
+          <FaTwitter className="contact-icons" size={40} />
+        </div>
+      </div>
+
+      {/* FOOTER */}
+      <footer className="footer">
+        &#169; 2026 Made by Pushkar &bull; All Rights Reserved
+      </footer>
     </div>
-  );
-};
+  )
+}
 
-export default Portfolio;
+export default Portfolio
