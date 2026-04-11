@@ -1,5 +1,9 @@
 import "./styles/Portfolio.css"
 import Snowfall from "react-snowfall";
+import OrbitingCircle from "./components/OrbitingCircle";
+import { File, icons, Search, Settings } from "lucide-react"
+
+import { OrbitingCircles } from "@/components/ui/orbiting-circles"
 
 // IMPORT ICONS
 import cpp from "./assets/icons/cpp.svg";
@@ -55,9 +59,10 @@ const SKILLS = [
   { image: postgresql, title: "Postgresql" },
   { image: git, title: "Git" }
 ]
-const CONTAINER_SIZE = Math.min(window.innerWidth*0.8, 600)
-const RADIUS = CONTAINER_SIZE/2
-const ITEM_SIZE = 50
+
+const sk = [
+  cpp, nodejs, python, react, mongodb, tailwind, postgresql, git
+]
 
 const Portfolio = () => {
 
@@ -136,20 +141,10 @@ const Portfolio = () => {
       {/* SKILLS SECTION */}
       <div className="skills-section section">
         <h1 className="section-title">SKILL SET</h1>
-
-        <div className="skills-container">
-          <div className="rotating-circle">
-            {SKILLS.map((item, index) => {
-              const angle = (index * (360 / SKILLS.length)) * (Math.PI / 180)
-              const posX = 50 + (50 * Math.sin(angle))
-              const posY = 50 - (50 * Math.cos(angle))
-              return (
-                <SkillTile key={index} top={`${posY}%`} left={`${posX}%`} image={item.image} title={item.title} />
-              )
-            })}
-          </div>
-        </div>
+          <OrbitingCircle icons={sk} iconSize={60} radius={300}  />
       </div>
+
+
 
       {/* PROJECTS SECTION */}
       <div className="projects-section section">
