@@ -61,8 +61,15 @@ const SKILLS = [
   { image: git, title: "Git" }
 ]
 
-const sk = [
-  cpp, nodejs, python, react, mongodb, tailwind, postgresql, git
+const orbitSkills = [
+  { image: cpp, title: "Cpp" },
+  { image: nodejs, title: "Nodejs" },
+  { image: python, title: "Python" },
+  { image: react, title: "React" },
+  { image: mongodb, title: "Mongodb" },
+  { image: tailwind, title: "Tailwind" },
+  { image: postgresql, title: "Postgresql" },
+  { image: git, title: "Git" }
 ]
 
 const flyingSpriteModules = import.meta.glob(
@@ -277,7 +284,7 @@ const Portfolio = () => {
       {/* SKILLS SECTION */}
       <div className="skills-section section">
         <h1 className="section-title">SKILL SET</h1>
-          <OrbitingCircle icons={sk} iconSize={60} radius={300}  />
+          <OrbitingCircle skills={orbitSkills} iconSize={60} radius={220}  />
       </div>
 
 
