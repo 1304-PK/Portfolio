@@ -212,6 +212,70 @@ body {
   margin-bottom: 20vmin;
 }
 
+.skills-section {
+  height: 100vh;
+  margin-bottom: 0;
+  padding: 2rem 0 1rem;
+  overflow: hidden;
+}
+
+.skills-section .section-title {
+  margin-bottom: 2.5rem;
+}
+
+.skill-orbit-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  background: linear-gradient(140deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.05));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.42),
+    inset 0 -6px 12px rgba(255, 255, 255, 0.05),
+    0 14px 28px rgba(0, 0, 0, 0.42),
+    0 3px 8px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(10px) saturate(125%);
+  -webkit-backdrop-filter: blur(10px) saturate(125%);
+  transition: border-color 0.2s ease;
+}
+
+.skill-orbit-item:hover {
+  border-color: rgba(255, 255, 255, 0.68);
+}
+
+.skill-orbit-item img {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+}
+
+.skill-orbit-tooltip {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%) translateY(6px);
+  opacity: 0;
+  pointer-events: none;
+  white-space: nowrap;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: #fff;
+  background: rgba(20, 20, 20, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 7px;
+  padding: 4px 8px;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.skill-orbit-item:hover .skill-orbit-tooltip {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
 
 .section-title {
   background-image: url("https://media.istockphoto.com/id/501296920/photo/baie-beau-vallon-beach-on-island-mahe-in-seychelles.jpg?s=612x612&w=0&k=20&c=vZ7W_ezmPIOKcIHsafs8dnahsNQIy1E-vU_wSCsMRv0=");
