@@ -109,7 +109,6 @@ const Portfolio = () => {
   const stillSprite = stillFrames[0] ?? flyingFrames[0] ?? "";
   const stillRadius = 150;
   const chaseStartRadius = 160;
-  const spriteDimension = 96;
 
   useEffect(() => {
     const handleMouseMove = (event) => {
@@ -199,8 +198,6 @@ const Portfolio = () => {
           style={{
             left: `${spritePosition.x}px`,
             top: `${spritePosition.y}px`,
-            width: `${spriteDimension}px`,
-            height: `${spriteDimension}px`,
             transform: shouldFlipSprite
               ? "translate(-50%, -50%) scaleX(-1)"
               : "translate(-50%, -50%) scaleX(1)",
