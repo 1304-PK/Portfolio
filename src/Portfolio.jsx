@@ -1,4 +1,5 @@
 import "./styles/Portfolio.css"
+import { useEffect, useMemo, useRef, useState } from "react";
 import Snowfall from "react-snowfall";
 import OrbitingCircle from "./components/OrbitingCircle";
 import { File, icons, Search, Settings } from "lucide-react"
@@ -64,10 +65,148 @@ const sk = [
   cpp, nodejs, python, react, mongodb, tailwind, postgresql, git
 ]
 
+const flyingSpriteModules = import.meta.glob(
+  "./assets/sprites/flying/*.{png,jpg,jpeg,webp,gif}",
+  { eager: true, import: "default" }
+);
+
+const stillSpriteModules = import.meta.glob(
+  "./assets/sprites/*still*.{png,jpg,jpeg,webp,gif}",
+  { eager: true, import: "default" }
+);
+
+const stillDirectorySpriteModules = import.meta.glob(
+  "./assets/sprites/still/*.{png,jpg,jpeg,webp,gif}",
+  { eager: true, import: "default" }
+);
+
+const sortSpritePaths = (spriteObject) =>
+  Object.entries(spriteObject)
+    .sort(([pathA], [pathB]) =>
+      pathA.localeCompare(pathB, undefined, { numeric: true, sensitivity: "base" })
+    )
+    .map(([, spritePath]) => spritePath);
+
 const Portfolio = () => {
+  const getScreenCenter = () => ({
+    x: window.innerWidth / 2,
+    y: window.innerHeight / 2,
+  });
+
+  const [cursorPosition, setCursorPosition] = useState(getScreenCenter);
+  const [spritePosition, setSpritePosition] = useState(getScreenCenter);
+  const [frameIndex, setFrameIndex] = useState(0);
+  const [isChasing, setIsChasing] = useState(false);
+  const cursorPositionRef = useRef(getScreenCenter());
+  const isChasingRef = useRef(false);
+
+  const flyingFrames = useMemo(() => sortSpritePaths(flyingSpriteModules), []);
+  const stillFrames = useMemo(
+    () => [...new Set([...sortSpritePaths(stillSpriteModules), ...sortSpritePaths(stillDirectorySpriteModules)])],
+    []
+  );
+
+  const stillSprite = stillFrames[0] ?? flyingFrames[0] ?? "";
+  const stillRadius = 150;
+  const chaseStartRadius = 160;
+  const spriteDimension = 96;
+
+  useEffect(() => {
+    const handleMouseMove = (event) => {
+      const nextPosition = { x: event.clientX, y: event.clientY };
+      cursorPositionRef.current = nextPosition;
+      setCursorPosition(nextPosition);
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, []);
+
+  useEffect(() => {
+    const handleResize = () => {
+      const center = getScreenCenter();
+      cursorPositionRef.current = center;
+      setCursorPosition(center);
+      setSpritePosition(center);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    let animationFrameId;
+
+    const animate = () => {
+      setSpritePosition((previousPosition) => {
+        const deltaX = cursorPositionRef.current.x - previousPosition.x;
+        const deltaY = cursorPositionRef.current.y - previousPosition.y;
+        const distance = Math.hypot(deltaX, deltaY);
+
+        const shouldStartChasing = distance > chaseStartRadius;
+        const shouldStopChasing = distance <= stillRadius;
+
+        if (!isChasingRef.current && shouldStartChasing) {
+          isChasingRef.current = true;
+          setIsChasing(true);
+        } else if (isChasingRef.current && shouldStopChasing) {
+          isChasingRef.current = false;
+          setIsChasing(false);
+        }
+
+        if (!isChasingRef.current) {
+          return previousPosition;
+        }
+
+        const movementStep = Math.min(distance, 3.5);
+        return {
+          x: previousPosition.x + (deltaX / distance) * movementStep,
+          y: previousPosition.y + (deltaY / distance) * movementStep,
+        };
+      });
+
+      animationFrameId = window.requestAnimationFrame(animate);
+    };
+
+    animationFrameId = window.requestAnimationFrame(animate);
+    return () => window.cancelAnimationFrame(animationFrameId);
+  }, [chaseStartRadius, stillRadius]);
+
+  useEffect(() => {
+    if (flyingFrames.length <= 1) {
+      return undefined;
+    }
+
+    const frameIntervalId = window.setInterval(() => {
+      setFrameIndex((previousFrame) => (previousFrame + 1) % flyingFrames.length);
+    }, 90);
+
+    return () => window.clearInterval(frameIntervalId);
+  }, [flyingFrames.length]);
+
+  const currentSprite =
+    (isChasing ? flyingFrames[frameIndex] : stillSprite) ?? stillSprite;
+  const shouldFlipSprite = cursorPosition.x > spritePosition.x;
 
   return (
     <div id='portfolio-container'>
+      {currentSprite && (
+        <img
+          src={currentSprite}
+          alt=""
+          aria-hidden="true"
+          className="cursor-chaser-sprite"
+          style={{
+            left: `${spritePosition.x}px`,
+            top: `${spritePosition.y}px`,
+            width: `${spriteDimension}px`,
+            height: `${spriteDimension}px`,
+            transform: shouldFlipSprite
+              ? "translate(-50%, -50%) scaleX(-1)"
+              : "translate(-50%, -50%) scaleX(1)",
+          }}
+        />
+      )}
       <Snowfall style={{
         position: "fixed"
       }} />
