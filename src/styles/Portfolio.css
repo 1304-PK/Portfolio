@@ -31,6 +31,15 @@ body {
   cursor: url("../assets/cursor/pokeball.png") 16 16, auto;
 }
 
+.cursor-chaser-sprite {
+  position: fixed;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 20;
+  image-rendering: pixelated;
+  user-select: none;
+}
+
 /* ── hero wrapper ── */
 .hero {
   background: var(--bg);
