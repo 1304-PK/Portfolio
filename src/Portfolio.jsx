@@ -87,6 +87,11 @@ const stillDirectorySpriteModules = import.meta.glob(
   { eager: true, import: "default" }
 );
 
+const sleepSpriteModules = import.meta.glob(
+  "./assets/sprites/*sleep*.{png,jpg,jpeg,webp,gif}",
+  { eager: true, import: "default" }
+);
+
 const sortSpritePaths = (spriteObject) =>
   Object.entries(spriteObject)
     .sort(([pathA], [pathB]) =>
@@ -104,6 +109,7 @@ const Portfolio = () => {
   const [spritePosition, setSpritePosition] = useState(getScreenCenter);
   const [frameIndex, setFrameIndex] = useState(0);
   const [isChasing, setIsChasing] = useState(false);
+  const [isSleeping, setIsSleeping] = useState(false);
   const cursorPositionRef = useRef(getScreenCenter());
   const isChasingRef = useRef(false);
 
@@ -112,8 +118,10 @@ const Portfolio = () => {
     () => [...new Set([...sortSpritePaths(stillSpriteModules), ...sortSpritePaths(stillDirectorySpriteModules)])],
     []
   );
+  const sleepFrames = useMemo(() => sortSpritePaths(sleepSpriteModules), []);
 
   const stillSprite = stillFrames[0] ?? flyingFrames[0] ?? "";
+  const sleepSprite = sleepFrames[0] ?? stillSprite;
   const stillRadius = 150;
   const chaseStartRadius = 160;
 
@@ -145,6 +153,10 @@ const Portfolio = () => {
 
     const animate = () => {
       setSpritePosition((previousPosition) => {
+        if (isSleeping) {
+          return previousPosition;
+        }
+
         const deltaX = cursorPositionRef.current.x - previousPosition.x;
         const deltaY = cursorPositionRef.current.y - previousPosition.y;
         const distance = Math.hypot(deltaX, deltaY);
@@ -176,7 +188,7 @@ const Portfolio = () => {
 
     animationFrameId = window.requestAnimationFrame(animate);
     return () => window.cancelAnimationFrame(animationFrameId);
-  }, [chaseStartRadius, stillRadius]);
+  }, [chaseStartRadius, stillRadius, isSleeping]);
 
   useEffect(() => {
     if (flyingFrames.length <= 1) {
@@ -190,8 +202,9 @@ const Portfolio = () => {
     return () => window.clearInterval(frameIntervalId);
   }, [flyingFrames.length]);
 
-  const currentSprite =
-    (isChasing ? flyingFrames[frameIndex] : stillSprite) ?? stillSprite;
+  const currentSprite = isSleeping
+    ? sleepSprite
+    : ((isChasing ? flyingFrames[frameIndex] : stillSprite) ?? stillSprite);
   const shouldFlipSprite = cursorPosition.x > spritePosition.x;
 
   return (
@@ -200,12 +213,16 @@ const Portfolio = () => {
         <img
           src={currentSprite}
           alt=""
-          aria-hidden="true"
           className="cursor-chaser-sprite"
+          onClick={() => setIsSleeping((previousState) => !previousState)}
           style={{
             left: `${spritePosition.x}px`,
             top: `${spritePosition.y}px`,
-            transform: shouldFlipSprite
+            pointerEvents: "auto",
+            cursor: "pointer",
+            transform: isSleeping
+              ? "translate(-50%, -50%) scaleX(1)"
+              : shouldFlipSprite
               ? "translate(-50%, -50%) scaleX(-1)"
               : "translate(-50%, -50%) scaleX(1)",
           }}
