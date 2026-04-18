@@ -40,9 +40,16 @@ body {
 }
 
 /* ── hero wrapper ── */
+.hero-scroll-container {
+  height: 300vh;
+  position: relative;
+}
+
 .hero {
-  background: var(--bg);
-  min-height: 100vh;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  background: transparent;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -51,6 +58,36 @@ body {
   border-right: 1px solid var(--border);
   /* optional: if part of a split layout */
   box-sizing: border-box;
+  overflow: hidden;
+}
+
+.hero-bg-video {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+  z-index: -2;
+  will-change: filter;
+  opacity: 0.6;
+}
+
+.hero-content-top,
+.hero-content-bottom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  opacity: 0;
+  will-change: opacity, transform;
+}
+
+.hero-content-bottom .hero_role,
+.hero-content-bottom .hero_socials,
+.hero-content-bottom .hero_bio,
+.hero-content-bottom .hero_resume-btn {
+  align-items: center;
+  text-align: center;
 }
 
 /* STARTING HEADER── */
@@ -61,7 +98,6 @@ body {
   text-transform: uppercase;
   color: var(--accent);
   margin-bottom: 0.75rem;
-  animation: fadeUp 0.5s ease both;
 }
 
 /* ── NAME ── */
@@ -71,9 +107,10 @@ body {
   font-size: clamp(5rem, 16vw, 11rem);
   line-height: 0.92;
   letter-spacing: 0.01em;
-  color: var(--text-primary);
+  color: transparent;
+  opacity: 0;
   margin: 0 0 1.2rem 0;
-  animation: fadeUp 0.55s 0.08s ease both;
+  will-change: transform, opacity, color;
 }
 
 /* ── role line ── */
@@ -87,7 +124,6 @@ body {
   text-transform: uppercase;
   color: var(--text-muted);
   margin: 0 0 2.5rem 0;
-  animation: fadeUp 0.55s 0.15s ease both;
 }
 
 .hero_role-line {
@@ -102,7 +138,6 @@ body {
   display: flex;
   gap: 0.5rem;
   margin-bottom: 2.5rem;
-  animation: fadeUp 0.55s 0.22s ease both;
 }
 
 .hero_social-link {
@@ -132,7 +167,6 @@ body {
   color: var(--text-primary);
   max-width: 900px;
   margin: 0 0 2.75rem 0;
-  animation: fadeUp 0.55s 0.3s ease both;
 }
 
 .hero-bio-highlight {
@@ -156,7 +190,6 @@ body {
   cursor: pointer;
   width: fit-content;
   transition: background 0.18s ease, color 0.18s ease;
-  animation: fadeUp 0.55s 0.38s ease both;
 }
 
 .hero_resume-btn:hover {
@@ -206,7 +239,7 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: var(--bg);
+  background-color: transparent;
   color: var(--text-primary);
   margin-bottom: 20vmin;
 }
