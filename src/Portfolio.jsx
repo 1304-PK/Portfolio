@@ -2,9 +2,7 @@ import "./styles/Portfolio.css"
 import { useEffect, useMemo, useRef, useState } from "react";
 import Snowfall from "react-snowfall";
 import OrbitingCircle from "./components/OrbitingCircle";
-import { File, icons, Search, Settings } from "lucide-react"
-
-import { OrbitingCircles } from "@/components/ui/orbiting-circles"
+import { ChevronLeft, ChevronRight } from "lucide-react"
 
 // IMPORT ICONS
 import cpp from "./assets/icons/cpp.svg";
@@ -23,30 +21,21 @@ import { FaTwitter } from "react-icons/fa";
 
 // IMPORT COMPONENTS
 import ProjectCard from "./components/ProjectCard";
-import SkillTile from "./components/SkillTile";
 
 // IMPORT IMAGES
 import civic_care from "./assets/civic_care.png"
 import ytstack from "./assets/ytstack.png"
+import projectsData from "./data/projectsData.json";
 
-const PROJECTS = [
-  {
-    image: civic_care,
-    title: "Civic Care",
-    liveUrl: "dummy",
-    githubUrl: "dummy",
-    description: "this is an apt description for this project",
-    techStack: ["React", "Node", "Express", "MySQL"]
-  },
-  {
-    image: ytstack,
-    title: "YT Stack",
-    liveUrl: "dummy",
-    githubUrl: "dummy",
-    description: "this is an apt description for this project",
-    techStack: ["React", "Node", "Express", "MySQL"]
-  }
-]
+const PROJECT_IMAGE_MAP = {
+  civicCare: civic_care,
+  ytstack: ytstack,
+};
+
+const PROJECTS = projectsData.map((project) => ({
+  ...project,
+  image: PROJECT_IMAGE_MAP[project.imageKey],
+}));
 
 const SKILLS = [
   { image: cpp, title: "Cpp" },
@@ -110,6 +99,8 @@ const Portfolio = () => {
   const [frameIndex, setFrameIndex] = useState(0);
   const [isChasing, setIsChasing] = useState(false);
   const [isSleeping, setIsSleeping] = useState(false);
+  const [activeProjectIndex, setActiveProjectIndex] = useState(0);
+  const [visibleProjectCards, setVisibleProjectCards] = useState(3);
   const cursorPositionRef = useRef(getScreenCenter());
   const isChasingRef = useRef(false);
 
@@ -207,6 +198,47 @@ const Portfolio = () => {
     : ((isChasing ? flyingFrames[frameIndex] : stillSprite) ?? stillSprite);
   const shouldFlipSprite = cursorPosition.x > spritePosition.x;
 
+  useEffect(() => {
+    const setCardsByViewport = () => {
+      if (window.innerWidth < 760) {
+        setVisibleProjectCards(1);
+      } else if (window.innerWidth < 1120) {
+        setVisibleProjectCards(2);
+      } else {
+        setVisibleProjectCards(3);
+      }
+    };
+
+    setCardsByViewport();
+    window.addEventListener("resize", setCardsByViewport);
+    return () => window.removeEventListener("resize", setCardsByViewport);
+  }, []);
+
+  useEffect(() => {
+    const maxStartIndex = Math.max(PROJECTS.length - visibleProjectCards, 0);
+    setActiveProjectIndex((previousIndex) => Math.min(previousIndex, maxStartIndex));
+  }, [visibleProjectCards]);
+
+  const maxStartIndex = Math.max(PROJECTS.length - visibleProjectCards, 0);
+  const canGoToPreviousProject = activeProjectIndex > 0;
+  const canGoToNextProject = activeProjectIndex < maxStartIndex;
+
+  const handlePreviousProject = () => {
+    if (!canGoToPreviousProject) {
+      return;
+    }
+
+    setActiveProjectIndex((previousIndex) => Math.max(previousIndex - 1, 0));
+  };
+
+  const handleNextProject = () => {
+    if (!canGoToNextProject) {
+      return;
+    }
+
+    setActiveProjectIndex((previousIndex) => Math.min(previousIndex + 1, maxStartIndex));
+  };
+
   return (
     <div id='portfolio-container'>
       {currentSprite && (
@@ -223,8 +255,8 @@ const Portfolio = () => {
             transform: isSleeping
               ? "translate(-50%, -50%) scaleX(1)"
               : shouldFlipSprite
-              ? "translate(-50%, -50%) scaleX(-1)"
-              : "translate(-50%, -50%) scaleX(1)",
+                ? "translate(-50%, -50%) scaleX(-1)"
+                : "translate(-50%, -50%) scaleX(1)",
           }}
         />
       )}
@@ -309,19 +341,52 @@ const Portfolio = () => {
       {/* PROJECTS SECTION */}
       <div className="projects-section section">
         <h1 className="section-title">PROJECTS</h1>
-        <div className="projects-container">
-          {PROJECTS.map((item, index) => {
-            return (
-              <ProjectCard
-                image={item.image}
-                title={item.title}
-                liveUrl={item.liveUrl}
-                githubUrl={item.githubUrl}
-                description={item.description}
-                techStack={item.techStack}
-              />
-            )
-          })}
+        <div className="projects-carousel-shell">
+          <button
+            type="button"
+            className={`projects-carousel-btn ${!canGoToPreviousProject ? "is-disabled" : ""}`}
+            onClick={handlePreviousProject}
+            disabled={!canGoToPreviousProject}
+            aria-label="Previous project"
+          >
+            <ChevronLeft size={22} />
+          </button>
+          <div className="projects-carousel-viewport">
+            <div
+              className="projects-carousel-track"
+              style={{
+                transform: `translateX(-${(activeProjectIndex * 100) / visibleProjectCards}%)`,
+              }}
+            >
+              {PROJECTS.map((item) => {
+                return (
+                  <div
+                    className="projects-carousel-slide"
+                    key={item.title}
+                    style={{ "--visible-project-cards": visibleProjectCards }}
+                  >
+                    <ProjectCard
+                      image={item.image}
+                      title={item.title}
+                      liveUrl={item.liveUrl}
+                      githubUrl={item.githubUrl}
+                      description={item.description}
+                      techStack={item.techStack}
+                    />
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+          <button
+            type="button"
+            className={`projects-carousel-btn ${!canGoToNextProject ? "is-disabled" : ""}`}
+            onClick={handleNextProject}
+            disabled={!canGoToNextProject}
+            aria-label="Next project"
+          >
+            <ChevronRight size={22} />
+          </button>
         </div>
       </div>
 
