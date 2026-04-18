@@ -104,6 +104,74 @@ const Portfolio = () => {
   const cursorPositionRef = useRef(getScreenCenter());
   const isChasingRef = useRef(false);
 
+  const heroScrollRef = useRef(null);
+  const nameRef = useRef(null);
+  const topContentRef = useRef(null);
+  const bottomContentRef = useRef(null);
+  const videoRef = useRef(null);
+
+  useEffect(() => {
+    let ticking = false;
+
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          if (!heroScrollRef.current) return;
+
+          const rect = heroScrollRef.current.getBoundingClientRect();
+          const scrollTop = -rect.top;
+          const scrollHeight = rect.height - window.innerHeight;
+
+          let progress = 0;
+          if (scrollHeight > 0) {
+            progress = Math.min(Math.max(scrollTop / scrollHeight, 0), 1);
+          }
+
+          const maxScale = 30;
+          const minScale = 1;
+          const currentScale = minScale * Math.pow(maxScale / minScale, 1 - progress);
+
+          const titleRevealProgress = Math.min(progress / 0.3, 1);
+
+          if (nameRef.current) {
+            nameRef.current.style.transform = `scale(${currentScale})`;
+            nameRef.current.style.opacity = titleRevealProgress;
+            nameRef.current.style.color = `rgba(240, 240, 240, ${titleRevealProgress})`;
+          }
+
+          if (videoRef.current) {
+            const maxBlur = 15;
+            videoRef.current.style.filter = `blur(${progress * maxBlur}px)`;
+          }
+
+          const revealStart = 0.6;
+          const revealProgress = Math.min(Math.max((progress - revealStart) / (1 - revealStart), 0), 1);
+          const translateY = (1 - revealProgress) * 40;
+          const opacity = revealProgress;
+
+          if (topContentRef.current) {
+            topContentRef.current.style.opacity = opacity;
+            topContentRef.current.style.transform = `translateY(${translateY}px)`;
+            topContentRef.current.style.pointerEvents = opacity > 0.1 ? 'auto' : 'none';
+          }
+
+          if (bottomContentRef.current) {
+            bottomContentRef.current.style.opacity = opacity;
+            bottomContentRef.current.style.transform = `translateY(${translateY}px)`;
+            bottomContentRef.current.style.pointerEvents = opacity > 0.1 ? 'auto' : 'none';
+          }
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const flyingFrames = useMemo(() => sortSpritePaths(flyingSpriteModules), []);
   const stillFrames = useMemo(
     () => [...new Set([...sortSpritePaths(stillSpriteModules), ...sortSpritePaths(stillDirectorySpriteModules)])],
@@ -260,22 +328,35 @@ const Portfolio = () => {
           }}
         />
       )}
-      <Snowfall style={{
+      <video
+        ref={videoRef}
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="hero-bg-video"
+        src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260307_083826_e938b29f-a43a-41ec-a153-3d4730578ab8.mp4"
+      />
+      <Snowfall color="white" style={{
         position: "fixed"
       }} />
       {/* HERO SECTION */}
-      <div className="hero">
-        <div className="hero_tag">Hi, I am</div>
+      <div className="hero-scroll-container" ref={heroScrollRef}>
+        <div className="hero">
+          <div className="hero-content-top" ref={topContentRef}>
+            <div className="hero_tag">Hi, I am</div>
+          </div>
 
-        <h1 className="hero_name">PUSHKAR</h1>
+          <h1 className="hero_name" ref={nameRef}>PUSHKAR</h1>
 
-        <p className="hero_role">
-          <span className="hero_role-line" />
-          COMPUTER SCIENCE ENGINEER
-          <span className="hero_role-line" />
-        </p>
+          <div className="hero-content-bottom" ref={bottomContentRef}>
+            <p className="hero_role">
+              <span className="hero_role-line" />
+              COMPUTER SCIENCE ENGINEER
+              <span className="hero_role-line" />
+            </p>
 
-        <div className="hero_socials">
+            <div className="hero_socials">
           {/* GitHub */}
           <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="hero_social-link" aria-label="GitHub">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
@@ -328,6 +409,8 @@ const Portfolio = () => {
             <path d="M5 12h14M12 5l7 7-7 7" />
           </svg>
         </a>
+          </div>
+        </div>
       </div>
 
       {/* SKILLS SECTION */}
