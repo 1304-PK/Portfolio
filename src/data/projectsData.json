@@ -1,0 +1,50 @@
+[
+  {
+    "imageKey": "civicCare",
+    "title": "Civic Care",
+    "liveUrl": "dummy",
+    "githubUrl": "dummy",
+    "description": "this is an apt description for this project",
+    "techStack": ["React", "Node", "Express", "MySQL"]
+  },
+  {
+    "imageKey": "ytstack",
+    "title": "YT Stack",
+    "liveUrl": "dummy",
+    "githubUrl": "dummy",
+    "description": "this is an apt description for this project",
+    "techStack": ["React", "Node", "Express", "MySQL"]
+  },
+  {
+    "imageKey": "civicCare",
+    "title": "Civic Care",
+    "liveUrl": "dummy",
+    "githubUrl": "dummy",
+    "description": "this is an apt description for this project",
+    "techStack": ["React", "Node", "Express", "MySQL"]
+  },
+  {
+    "imageKey": "ytstack",
+    "title": "YT Stack",
+    "liveUrl": "dummy",
+    "githubUrl": "dummy",
+    "description": "this is an apt description for this project",
+    "techStack": ["React", "Node", "Express", "MySQL"]
+  },
+  {
+    "imageKey": "civicCare",
+    "title": "Civic Care",
+    "liveUrl": "dummy",
+    "githubUrl": "dummy",
+    "description": "this is an apt description for this project",
+    "techStack": ["React", "Node", "Express", "MySQL"]
+  },
+  {
+    "imageKey": "ytstack",
+    "title": "YT Stack",
+    "liveUrl": "dummy",
+    "githubUrl": "dummy",
+    "description": "this is an apt description for this project",
+    "techStack": ["React", "Node", "Express", "MySQL"]
+  }
+]
