@@ -1,50 +1,26 @@
 [
   {
-    "imageKey": "civicCare",
-    "title": "Civic Care",
+    "imageKey": "lumineon",
+    "title": "Lumineon",
     "liveUrl": "dummy",
-    "githubUrl": "dummy",
-    "description": "this is an apt description for this project",
-    "techStack": ["React", "Node", "Express", "MySQL"]
-  },
-  {
-    "imageKey": "ytstack",
-    "title": "YT Stack",
-    "liveUrl": "dummy",
-    "githubUrl": "dummy",
-    "description": "this is an apt description for this project",
-    "techStack": ["React", "Node", "Express", "MySQL"]
+    "githubUrl": "https://github.com/1304-PK/collaborative-editor",
+    "description": "Built a real-time collaborative workspace that enables teams to create and interact on shared boards with seamless live synchronization, role-based permissions, and optimized state persistence for a responsive multi-user experience.",
+    "techStack": ["React","Tailwind CSS","Node.js","Express.js","WebSockets","Supabase","JWT Auth"]
   },
   {
     "imageKey": "civicCare",
     "title": "Civic Care",
     "liveUrl": "dummy",
-    "githubUrl": "dummy",
-    "description": "this is an apt description for this project",
-    "techStack": ["React", "Node", "Express", "MySQL"]
+    "githubUrl": "https://github.com/1304-PK/CivicCare",
+    "description": "Built a civic grievance platform that allows citizens to report public issues, connect with relevant authorities, and track complaint resolution through real-time status updates, improving transparency and accountability.",
+    "techStack": ["React","Node.js","Express.js","MySQL","REST API","JWT Auth"]
   },
   {
-    "imageKey": "ytstack",
-    "title": "YT Stack",
+    "imageKey": "adaptlearn",
+    "title": "Adapt Learn",
     "liveUrl": "dummy",
-    "githubUrl": "dummy",
-    "description": "this is an apt description for this project",
-    "techStack": ["React", "Node", "Express", "MySQL"]
-  },
-  {
-    "imageKey": "civicCare",
-    "title": "Civic Care",
-    "liveUrl": "dummy",
-    "githubUrl": "dummy",
-    "description": "this is an apt description for this project",
-    "techStack": ["React", "Node", "Express", "MySQL"]
-  },
-  {
-    "imageKey": "ytstack",
-    "title": "YT Stack",
-    "liveUrl": "dummy",
-    "githubUrl": "dummy",
-    "description": "this is an apt description for this project",
-    "techStack": ["React", "Node", "Express", "MySQL"]
+    "githubUrl": "https://github.com/1304-PK/AdaptLearn",
+    "description": "Engineered an AI-powered career intelligence platform that evaluates resume alignment against target roles, delivers actionable competency insights, and generates personalized learning pathways with curated resources to accelerate professional growth and job readiness.",
+    "techStack": ["React","Node.js","Tailwind CSS", "JWT Auth", "Supabase","Gemini API"]
   }
 ]
