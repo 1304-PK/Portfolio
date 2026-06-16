@@ -8,8 +8,8 @@ const ProjectCard = ({ image, title, liveUrl, githubUrl, description, techStack 
         <div className="details-header">
           <h1 className="project-title">{title}</h1>
           <div className="project-links">
-            <a className="project-live-link" href={liveUrl}>Live</a>
-            <a className="project-github-link" href={githubUrl} >Github</a>
+            <a className="project-live-link" href={liveUrl} target="_blank" rel="noopener norefferer">Live</a>
+            <a className="project-github-link" href={githubUrl} target="_blank" rel="noopener norefferer">Github</a>
           </div>
         </div>
         <p className="project-description">{description}</p>
