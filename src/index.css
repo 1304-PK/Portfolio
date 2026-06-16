@@ -160,7 +160,7 @@
   cursor: var(--default);
 }
 
-button, a, .card, .project-card, [role="button"],
-button *, a *, .card *, .project-card *, [role="button"] * {
+button, a, .card, [role="button"],
+button *, a *, .card * [role="button"] * {
   cursor: var(--pointer) !important;
-}
+}
