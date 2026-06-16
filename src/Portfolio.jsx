@@ -21,15 +21,20 @@ import { FaTwitter } from "react-icons/fa";
 
 // IMPORT COMPONENTS
 import ProjectCard from "./components/ProjectCard";
+import ScrollIndicator from "./components/ScrollIndicator";
 
 // IMPORT IMAGES
 import civic_care from "./assets/civic_care.png"
-import ytstack from "./assets/ytstack.png"
+import adaptlearn from "./assets/adaptlearn.png"
+import lumineon from "./assets/lumineon.png"
+
+// IMPORT PROJECTS DATA
 import projectsData from "./data/projectsData.json";
 
 const PROJECT_IMAGE_MAP = {
   civicCare: civic_care,
-  ytstack: ytstack,
+  adaptlearn: adaptlearn,
+  lumineon: lumineon
 };
 
 const PROJECTS = projectsData.map((project) => ({
@@ -108,6 +113,7 @@ const Portfolio = () => {
   const nameRef = useRef(null);
   const topContentRef = useRef(null);
   const bottomContentRef = useRef(null);
+  const scrollHintRef = useRef(null);
   const videoRef = useRef(null);
 
   useEffect(() => {
@@ -159,6 +165,12 @@ const Portfolio = () => {
             bottomContentRef.current.style.opacity = opacity;
             bottomContentRef.current.style.transform = `translateY(${translateY}px)`;
             bottomContentRef.current.style.pointerEvents = opacity > 0.1 ? 'auto' : 'none';
+          }
+
+          if (scrollHintRef.current) {
+            const hintOpacity = Math.max(1 - progress * 6, 0);
+            scrollHintRef.current.style.opacity = hintOpacity;
+            scrollHintRef.current.style.pointerEvents = hintOpacity > 0.1 ? 'auto' : 'none';
           }
           ticking = false;
         });
@@ -358,7 +370,7 @@ const Portfolio = () => {
 
             <div className="hero_socials">
           {/* GitHub */}
-          <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="hero_social-link" aria-label="GitHub">
+          <a href="https://github.com/1304-PK" target="_blank" rel="noopener noreferrer" className="hero_social-link" aria-label="GitHub">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 
           0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.385-1.335-1.755-1.335-1.755
@@ -374,7 +386,7 @@ const Portfolio = () => {
           </a>
 
           {/* LinkedIn */}
-          <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="hero_social-link" aria-label="LinkedIn">
+          <a href="https://www.linkedin.com/in/pushkar-kumar-singh-770a7536a/" target="_blank" rel="noopener noreferrer" className="hero_social-link" aria-label="LinkedIn">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
               <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037
           -1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046
@@ -386,8 +398,8 @@ const Portfolio = () => {
             </svg>
           </a>
 
-          {/* X (Twitter) */}
-          <a href="https://x.com" target="_blank" rel="noopener noreferrer" className="hero_social-link" aria-label="X">
+          {/* X */}
+          <a href="https://x.com/bachelord001" target="_blank" rel="noopener noreferrer" className="hero_social-link" aria-label="X">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
               <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231
           -5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.253 5.622L18.244 
@@ -409,6 +421,10 @@ const Portfolio = () => {
             <path d="M5 12h14M12 5l7 7-7 7" />
           </svg>
         </a>
+          </div>
+
+          <div ref={scrollHintRef}>
+            <ScrollIndicator />
           </div>
         </div>
       </div>
@@ -479,9 +495,15 @@ const Portfolio = () => {
         <h1 className="contact-section-heading">LET'S TALK</h1>
 
         <div className="contact-icons-section">
-          <FaGithub className="contact-icons" size={40} />
-          <FaLinkedin className="contact-icons" size={40} />
-          <FaTwitter className="contact-icons" size={40} />
+          <a href="https://github.com/1304-PK" target="_blank" rel="noopener noreferrer">
+            <FaGithub className="contact-icons" size={40} />
+          </a>
+          <a href="https://www.linkedin.com/in/pushkar-kumar-singh-770a7536a/" target="_blank" rel="noopener noreferrer">
+            <FaLinkedin className="contact-icons" size={40} />
+          </a>
+          <a href="https://x.com/bachelord001" target="_blank" rel="noopener noreferrer">
+            <FaTwitter className="contact-icons" size={40} />
+          </a>
         </div>
       </div>
 
