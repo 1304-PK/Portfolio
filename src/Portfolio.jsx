@@ -2,7 +2,7 @@ import "./styles/Portfolio.css"
 import { useEffect, useMemo, useRef, useState } from "react";
 import Snowfall from "react-snowfall";
 import OrbitingCircle from "./components/OrbitingCircle";
-import { ChevronLeft, ChevronRight } from "lucide-react"
+import background from "../src/assets/background.jpeg"
 
 // IMPORT ICONS
 import cpp from "./assets/icons/cpp.svg";
@@ -104,8 +104,6 @@ const Portfolio = () => {
   const [frameIndex, setFrameIndex] = useState(0);
   const [isChasing, setIsChasing] = useState(false);
   const [isSleeping, setIsSleeping] = useState(false);
-  const [activeProjectIndex, setActiveProjectIndex] = useState(0);
-  const [visibleProjectCards, setVisibleProjectCards] = useState(3);
   const cursorPositionRef = useRef(getScreenCenter());
   const isChasingRef = useRef(false);
 
@@ -115,11 +113,13 @@ const Portfolio = () => {
   const bottomContentRef = useRef(null);
   const scrollHintRef = useRef(null);
   const videoRef = useRef(null);
+  const isAnimatingRef = useRef(false);
 
   useEffect(() => {
     let ticking = false;
 
     const handleScroll = () => {
+      if (isAnimatingRef.current) return; // let rAF animation own the DOM during transition
       if (!ticking) {
         window.requestAnimationFrame(() => {
           if (!heroScrollRef.current) return;
@@ -182,6 +182,104 @@ const Portfolio = () => {
     handleScroll();
 
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Apply hero progress transforms — mirrors the scroll handler math exactly
+  const applyHeroProgress = (progress) => {
+    const maxScale = 30;
+    const minScale = 1;
+    const currentScale = minScale * Math.pow(maxScale / minScale, 1 - progress);
+    const titleRevealProgress = Math.min(progress / 0.3, 1);
+
+    if (nameRef.current) {
+      nameRef.current.style.transform = `scale(${currentScale})`;
+      nameRef.current.style.opacity = titleRevealProgress;
+      nameRef.current.style.color = `rgba(240, 240, 240, ${titleRevealProgress})`;
+    }
+
+    const revealStart = 0.6;
+    const revealProgress = Math.min(Math.max((progress - revealStart) / (1 - revealStart), 0), 1);
+    const translateY = (1 - revealProgress) * 40;
+    const opacity = revealProgress;
+
+    if (topContentRef.current) {
+      topContentRef.current.style.opacity = opacity;
+      topContentRef.current.style.transform = `translateY(${translateY}px)`;
+      topContentRef.current.style.pointerEvents = opacity > 0.1 ? 'auto' : 'none';
+    }
+    if (bottomContentRef.current) {
+      bottomContentRef.current.style.opacity = opacity;
+      bottomContentRef.current.style.transform = `translateY(${translateY}px)`;
+      bottomContentRef.current.style.pointerEvents = opacity > 0.1 ? 'auto' : 'none';
+    }
+    if (scrollHintRef.current) {
+      const hintOpacity = Math.max(1 - progress * 6, 0);
+      scrollHintRef.current.style.opacity = hintOpacity;
+      scrollHintRef.current.style.pointerEvents = hintOpacity > 0.1 ? 'auto' : 'none';
+    }
+  };
+
+  // Animate hero progress with rAF (no actual page scroll during animation)
+  const animateHeroProgress = (from, to, onComplete) => {
+    isAnimatingRef.current = true;
+    const duration = 600; // ms
+    const startTime = performance.now();
+
+    const tick = (now) => {
+      const rawT = Math.min((now - startTime) / duration, 1);
+      // ease-in-out cubic
+      const eased = rawT < 0.5
+        ? 4 * rawT * rawT * rawT
+        : 1 - Math.pow(-2 * rawT + 2, 3) / 2;
+      applyHeroProgress(from + (to - from) * eased);
+
+      if (rawT < 1) {
+        requestAnimationFrame(tick);
+      } else {
+        isAnimatingRef.current = false;
+        onComplete?.();
+      }
+    };
+
+    requestAnimationFrame(tick);
+  };
+
+  // Snap between initial screen and hero section (animation-driven, not scroll-driven)
+  useEffect(() => {
+    const handleWheelSnap = (e) => {
+      // Block all wheel events while animation is running
+      if (isAnimatingRef.current) {
+        e.preventDefault();
+        return;
+      }
+
+      const heroContainer = heroScrollRef.current;
+      if (!heroContainer) return;
+
+      const heroEnd = heroContainer.offsetTop + heroContainer.offsetHeight - window.innerHeight;
+      const atTop = window.scrollY <= 10;
+      const atHeroEnd = Math.abs(window.scrollY - heroEnd) <= 10;
+
+      // Scroll down from very top → animate hero reveal in place, then jump to heroEnd
+      if (atTop && e.deltaY > 0) {
+        e.preventDefault();
+        animateHeroProgress(0, 1, () => {
+          window.scrollTo({ top: heroEnd, behavior: 'instant' });
+        });
+        return;
+      }
+
+      // Scroll up from hero end → animate hero hide in place, then jump to top
+      if (atHeroEnd && e.deltaY < 0) {
+        e.preventDefault();
+        animateHeroProgress(1, 0, () => {
+          window.scrollTo({ top: 0, behavior: 'instant' });
+        });
+      }
+    };
+
+    window.addEventListener('wheel', handleWheelSnap, { passive: false });
+    return () => window.removeEventListener('wheel', handleWheelSnap);
   }, []);
 
   const flyingFrames = useMemo(() => sortSpritePaths(flyingSpriteModules), []);
@@ -278,54 +376,13 @@ const Portfolio = () => {
     : ((isChasing ? flyingFrames[frameIndex] : stillSprite) ?? stillSprite);
   const shouldFlipSprite = cursorPosition.x > spritePosition.x;
 
-  useEffect(() => {
-    const setCardsByViewport = () => {
-      if (window.innerWidth < 760) {
-        setVisibleProjectCards(1);
-      } else if (window.innerWidth < 1120) {
-        setVisibleProjectCards(2);
-      } else {
-        setVisibleProjectCards(3);
-      }
-    };
-
-    setCardsByViewport();
-    window.addEventListener("resize", setCardsByViewport);
-    return () => window.removeEventListener("resize", setCardsByViewport);
-  }, []);
-
-  useEffect(() => {
-    const maxStartIndex = Math.max(PROJECTS.length - visibleProjectCards, 0);
-    setActiveProjectIndex((previousIndex) => Math.min(previousIndex, maxStartIndex));
-  }, [visibleProjectCards]);
-
-  const maxStartIndex = Math.max(PROJECTS.length - visibleProjectCards, 0);
-  const canGoToPreviousProject = activeProjectIndex > 0;
-  const canGoToNextProject = activeProjectIndex < maxStartIndex;
-
-  const handlePreviousProject = () => {
-    if (!canGoToPreviousProject) {
-      return;
-    }
-
-    setActiveProjectIndex((previousIndex) => Math.max(previousIndex - 1, 0));
-  };
-
-  const handleNextProject = () => {
-    if (!canGoToNextProject) {
-      return;
-    }
-
-    setActiveProjectIndex((previousIndex) => Math.min(previousIndex + 1, maxStartIndex));
-  };
-
   return (
     <div id='portfolio-container'>
       {currentSprite && (
         <img
           src={currentSprite}
           alt=""
-          className="cursor-chaser-sprite"
+          className="t-sprite"
           onClick={() => setIsSleeping((previousState) => !previousState)}
           style={{
             left: `${spritePosition.x}px`,
@@ -333,22 +390,14 @@ const Portfolio = () => {
             pointerEvents: "auto",
             cursor: "pointer",
             transform: isSleeping
-              ? "translate(-50%, -50%) scaleX(1)"
+              ? "translate(-50%, -50%) scale(0.8)"
               : shouldFlipSprite
-                ? "translate(-50%, -50%) scaleX(-1)"
-                : "translate(-50%, -50%) scaleX(1)",
+                ? "translate(-50%, -50%) scale(-0.8, 0.8)"
+                : "translate(-50%, -50%) scale(0.8, 0.8)",
           }}
         />
       )}
-      <video
-        ref={videoRef}
-        autoPlay
-        loop
-        muted
-        playsInline
-        className="hero-bg-video"
-        src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260307_083826_e938b29f-a43a-41ec-a153-3d4730578ab8.mp4"
-      />
+      <img src={background} alt="" className="background-image"/>
       <Snowfall color="white" style={{
         position: "fixed"
       }} />
@@ -369,10 +418,10 @@ const Portfolio = () => {
             </p>
 
             <div className="hero_socials">
-          {/* GitHub */}
-          <a href="https://github.com/1304-PK" target="_blank" rel="noopener noreferrer" className="hero_social-link" aria-label="GitHub">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 
+              {/* GitHub */}
+              <a href="https://github.com/1304-PK" target="_blank" rel="noopener noreferrer" className="hero_social-link" aria-label="GitHub">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 
           0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.385-1.335-1.755-1.335-1.755
           -1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 
           3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 
@@ -382,45 +431,45 @@ const Portfolio = () => {
           1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 
           0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 21.795 
           24 17.295 24 12c0-6.63-5.37-12-12-12z"/>
-            </svg>
-          </a>
+                </svg>
+              </a>
 
-          {/* LinkedIn */}
-          <a href="https://www.linkedin.com/in/pushkar-kumar-singh-770a7536a/" target="_blank" rel="noopener noreferrer" className="hero_social-link" aria-label="LinkedIn">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037
+              {/* LinkedIn */}
+              <a href="https://www.linkedin.com/in/pushkar-kumar-singh-770a7536a/" target="_blank" rel="noopener noreferrer" className="hero_social-link" aria-label="LinkedIn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037
           -1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046
           c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 
           7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 
           13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542
           C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729
           C24 .774 23.2 0 22.222 0h.003z"/>
-            </svg>
-          </a>
+                </svg>
+              </a>
 
-          {/* X */}
-          <a href="" target="_blank" rel="noopener noreferrer" className="hero_social-link" aria-label="X">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231
+              {/* X */}
+              <a href="" target="_blank" rel="noopener noreferrer" className="hero_social-link" aria-label="X">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231
           -5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.253 5.622L18.244 
           2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/>
-            </svg>
-          </a>
-        </div>
+                </svg>
+              </a>
+            </div>
 
-        <p className="hero_bio">
-          I build <span className="hero-bio-highlight">robust</span> systems and <span className="hero-bio-highlight">elegant</span> interfaces that live at the intersection of
-          performance and craft. Currently focused on full-stack development, developer
-          tooling, and anything that makes engineers more productive with a touch of <span className="hero-bio-highlight">creativity</span>. Open to new
-          opportunities and interesting problems.
-        </p>
+            <p className="hero_bio">
+              I build <span className="hero-bio-highlight">robust</span> systems and <span className="hero-bio-highlight">elegant</span> interfaces that live at the intersection of
+              performance and craft. Currently focused on full-stack development, developer
+              tooling, and anything that makes engineers more productive with a touch of <span className="hero-bio-highlight">creativity</span>. Open to new
+              opportunities and interesting problems.
+            </p>
 
-        <a href="/resume.pdf" target="_blank" rel="noopener noreferrer" className="hero_resume-btn">
-          Resume
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-            <path d="M5 12h14M12 5l7 7-7 7" />
-          </svg>
-        </a>
+            <a href="/resume.pdf" target="_blank" rel="noopener noreferrer" className="hero_resume-btn">
+              Resume
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </a>
           </div>
 
           <div ref={scrollHintRef}>
@@ -432,78 +481,52 @@ const Portfolio = () => {
       {/* SKILLS SECTION */}
       <div className="skills-section section">
         <h1 className="section-title">SKILL SET</h1>
-          <OrbitingCircle skills={orbitSkills} iconSize={60} radius={220}  />
+        <OrbitingCircle skills={orbitSkills} iconSize={60} radius={220} />
       </div>
 
 
 
       {/* PROJECTS SECTION */}
-      <div className="projects-section section">
-        <h1 className="section-title">PROJECTS</h1>
-        <div className="projects-carousel-shell">
-          <button
-            type="button"
-            className={`projects-carousel-btn ${!canGoToPreviousProject ? "is-disabled" : ""}`}
-            onClick={handlePreviousProject}
-            disabled={!canGoToPreviousProject}
-            aria-label="Previous project"
-          >
-            <ChevronLeft size={22} />
-          </button>
-          <div className="projects-carousel-viewport">
-            <div
-              className="projects-carousel-track"
-              style={{
-                transform: `translateX(-${(activeProjectIndex * 100) / visibleProjectCards}%)`,
-              }}
-            >
-              {PROJECTS.map((item) => {
-                return (
-                  <div
-                    className="projects-carousel-slide"
-                    key={item.title}
-                    style={{ "--visible-project-cards": visibleProjectCards }}
-                  >
-                    <ProjectCard
-                      image={item.image}
-                      title={item.title}
-                      liveUrl={item.liveUrl}
-                      githubUrl={item.githubUrl}
-                      description={item.description}
-                      techStack={item.techStack}
-                    />
-                  </div>
-                )
-              })}
-            </div>
+      <div className="projects-section-container">
+        <div className="projects-section">
+          <div className="projects-left">
+            <div className="projects-vertical-line"></div>
+            <h1 className="projects-title">PROJECTS</h1>
           </div>
-          <button
-            type="button"
-            className={`projects-carousel-btn ${!canGoToNextProject ? "is-disabled" : ""}`}
-            onClick={handleNextProject}
-            disabled={!canGoToNextProject}
-            aria-label="Next project"
-          >
-            <ChevronRight size={22} />
-          </button>
+          <div className="projects-right">
+            {PROJECTS.map((item) => (
+              <div className="project-card-wrapper" key={item.title}>
+                <ProjectCard
+                  image={item.image}
+                  title={item.title}
+                  liveUrl={item.liveUrl}
+                  githubUrl={item.githubUrl}
+                  description={item.description}
+                  techStack={item.techStack}
+                />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
       {/* CONTACT SECTION */}
-      <div className="contact-section section">
-        <h1 className="contact-section-heading">IF YOU'VE SCROLLED THIS FAR...</h1>
-        <h1 className="contact-section-heading">LET'S TALK</h1>
+      <div className="contact-section">
+        <h1 className="contact-title">CONTACT ME</h1>
 
-        <div className="contact-icons-section">
-          <a href="https://github.com/1304-PK" target="_blank" rel="noopener noreferrer">
-            <FaGithub className="contact-icons" size={40} />
-          </a>
-          <a href="https://www.linkedin.com/in/pushkar-kumar-singh-770a7536a/" target="_blank" rel="noopener noreferrer">
-            <FaLinkedin className="contact-icons" size={40} />
-          </a>
-          <a href="" target="_blank" rel="noopener noreferrer">
-            <FaTwitter className="contact-icons" size={40} />
-          </a>
+        <div className="contact-bottom">
+          <div className="contact-bottom-left">
+            <h2 className="contact-heading-black">EMAIL</h2>
+            <h2 className="contact-heading-black">LINKEDIN</h2>
+            <h2 className="contact-heading-black">TWITTER</h2>
+            <h2 className="contact-heading-black">GITHUB</h2>
+          </div>
+          <div className="contact-bottom-right">
+            <p className="contact-statement">got a project in mind?</p>
+            <p className="contact-statement">want to contact?</p>
+            <p className="contact-statement">My inbox is always open?</p>
+            <p className="contact-statement">Contact me!</p>
+          </div>
         </div>
       </div>
 
