@@ -1,8 +1,31 @@
+import { useEffect, useRef, useState } from "react";
 import "../styles/ProjectCard.css"
 
 const ProjectCard = ({ image, title, liveUrl, githubUrl, description, techStack }) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const cardRef = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsVisible(entry.isIntersecting);
+      },
+      { threshold: 0.2 }
+    );
+
+    if (cardRef.current) {
+      observer.observe(cardRef.current);
+    }
+
+    return () => {
+      if (cardRef.current) {
+        observer.unobserve(cardRef.current);
+      }
+    };
+  }, []);
+
   return (
-    <div className="project-card">
+    <div ref={cardRef} className={`project-card ${isVisible ? "is-visible" : ""}`}>
       <div className="project-img-wrapper"><img src={image} alt="" className="project-img" /></div>
       <div className="project-details">
         <div className="details-header">
