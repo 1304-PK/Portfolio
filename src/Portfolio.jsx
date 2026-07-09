@@ -3,11 +3,9 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Snowfall from "react-snowfall";
 import OrbitingCircle from "./components/OrbitingCircle";
 import background from "../src/assets/background.jpeg"
-
+import { motion } from "framer-motion";
 // IMPORT ICONS
 import cpp from "./assets/icons/cpp.svg";
-import express from "./assets/icons/express.png";
-import github from "./assets/icons/github.png";
 import nodejs from "./assets/icons/nodejs.svg";
 import python from "./assets/icons/python.svg";
 import react from "./assets/icons/react.svg";
@@ -15,6 +13,11 @@ import tailwind from "./assets/icons/tailwind.svg";
 import postgresql from "./assets/icons/postgresql.svg"
 import mongodb from "./assets/icons/mongodb.svg"
 import git from "./assets/icons/git.svg"
+import express from "./assets/icons/express.svg"
+import fastapi from "./assets/icons/fastapi.svg"
+import javascript from "./assets/icons/javascript.svg"
+import langchain from "./assets/icons/langchain.svg"
+import langgraph from "./assets/icons/langgraph.svg"
 import { FaGithub } from "react-icons/fa";
 import { FaLinkedin } from "react-icons/fa";
 import { FaTwitter } from "react-icons/fa";
@@ -42,28 +45,23 @@ const PROJECTS = projectsData.map((project) => ({
   image: PROJECT_IMAGE_MAP[project.imageKey],
 }));
 
-const SKILLS = [
-  { image: cpp, title: "Cpp" },
-  { image: express, title: "Express" },
-  { image: github, title: "Github" },
-  { image: nodejs, title: "Nodejs" },
+const outerOrbitSkills = [
+  { image: cpp, title: "C++" },
   { image: python, title: "Python" },
-  { image: react, title: "React" },
-  { image: mongodb, title: "Mongodb" },
-  { image: tailwind, title: "Tailwind" },
-  { image: postgresql, title: "Postgresql" },
-  { image: git, title: "Git" }
-]
+  { image: javascript, title: "JavaScript" },
+  { image: git, title: "Git" },
+  { image: nodejs, title: "Node.js" },
+  { image: mongodb, title: "MongoDB" },
+  { image: postgresql, title: "PostgreSQL" }
+];
 
-const orbitSkills = [
-  { image: cpp, title: "Cpp" },
-  { image: nodejs, title: "Nodejs" },
-  { image: python, title: "Python" },
+const innerOrbitSkills = [
   { image: react, title: "React" },
-  { image: mongodb, title: "Mongodb" },
-  { image: tailwind, title: "Tailwind" },
-  { image: postgresql, title: "Postgresql" },
-  { image: git, title: "Git" }
+  { image: express, title: "Express" },
+  { image: langchain, title: "LangChain" },
+  { image: fastapi, title: "FastAPI" },
+  { image: langgraph, title: "LangGraph" },
+  { image: tailwind, title: "Tailwind CSS" }
 ]
 
 const flyingSpriteModules = import.meta.glob(
@@ -93,11 +91,23 @@ const sortSpritePaths = (spriteObject) =>
     )
     .map(([, spritePath]) => spritePath);
 
-const Portfolio = () => {
-  const getScreenCenter = () => ({
-    x: window.innerWidth / 2,
-    y: window.innerHeight / 2,
-  });
+const getScreenCenter = () => ({
+  x: window.innerWidth / 2,
+  y: window.innerHeight / 2,
+});
+
+const ChasingSprite = () => {
+  const flyingFrames = useMemo(() => sortSpritePaths(flyingSpriteModules), []);
+  const stillFrames = useMemo(
+    () => [...new Set([...sortSpritePaths(stillSpriteModules), ...sortSpritePaths(stillDirectorySpriteModules)])],
+    []
+  );
+  const sleepFrames = useMemo(() => sortSpritePaths(sleepSpriteModules), []);
+
+  const stillSprite = stillFrames[0] ?? flyingFrames[0] ?? "";
+  const sleepSprite = sleepFrames[0] ?? stillSprite;
+  const stillRadius = 150;
+  const chaseStartRadius = 160;
 
   const [cursorPosition, setCursorPosition] = useState(getScreenCenter);
   const [spritePosition, setSpritePosition] = useState(getScreenCenter);
@@ -107,6 +117,112 @@ const Portfolio = () => {
   const cursorPositionRef = useRef(getScreenCenter());
   const isChasingRef = useRef(false);
 
+  useEffect(() => {
+    const handleMouseMove = (event) => {
+      const nextPosition = { x: event.clientX, y: event.clientY };
+      cursorPositionRef.current = nextPosition;
+      setCursorPosition(nextPosition);
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, []);
+
+  useEffect(() => {
+    const handleResize = () => {
+      const center = getScreenCenter();
+      cursorPositionRef.current = center;
+      setCursorPosition(center);
+      setSpritePosition(center);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    let animationFrameId;
+
+    const animate = () => {
+      setSpritePosition((previousPosition) => {
+        if (isSleeping) {
+          return previousPosition;
+        }
+
+        const deltaX = cursorPositionRef.current.x - previousPosition.x;
+        const deltaY = cursorPositionRef.current.y - previousPosition.y;
+        const distance = Math.hypot(deltaX, deltaY);
+
+        const shouldStartChasing = distance > chaseStartRadius;
+        const shouldStopChasing = distance <= stillRadius;
+
+        if (!isChasingRef.current && shouldStartChasing) {
+          isChasingRef.current = true;
+          setIsChasing(true);
+        } else if (isChasingRef.current && shouldStopChasing) {
+          isChasingRef.current = false;
+          setIsChasing(false);
+        }
+
+        if (!isChasingRef.current) {
+          return previousPosition;
+        }
+
+        const movementStep = Math.min(distance, 3.5);
+        return {
+          x: previousPosition.x + (deltaX / distance) * movementStep,
+          y: previousPosition.y + (deltaY / distance) * movementStep,
+        };
+      });
+
+      animationFrameId = window.requestAnimationFrame(animate);
+    };
+
+    animationFrameId = window.requestAnimationFrame(animate);
+    return () => window.cancelAnimationFrame(animationFrameId);
+  }, [chaseStartRadius, stillRadius, isSleeping]);
+
+  useEffect(() => {
+    if (flyingFrames.length <= 1) {
+      return undefined;
+    }
+
+    const frameIntervalId = window.setInterval(() => {
+      setFrameIndex((previousFrame) => (previousFrame + 1) % flyingFrames.length);
+    }, 90);
+
+    return () => window.clearInterval(frameIntervalId);
+  }, [flyingFrames.length]);
+
+  const currentSprite = isSleeping
+    ? sleepSprite
+    : ((isChasing ? flyingFrames[frameIndex] : stillSprite) ?? stillSprite);
+  const shouldFlipSprite = cursorPosition.x > spritePosition.x;
+
+  if (!currentSprite) return null;
+
+  return (
+    <img
+      src={currentSprite}
+      alt=""
+      className="t-sprite"
+      onClick={() => setIsSleeping((previousState) => !previousState)}
+      style={{
+        left: `${spritePosition.x}px`,
+        top: `${spritePosition.y}px`,
+        pointerEvents: "auto",
+        cursor: "pointer",
+        transform: isSleeping
+          ? "translate(-50%, -50%) scale(0.8)"
+          : shouldFlipSprite
+            ? "translate(-50%, -50%) scale(-0.8, 0.8)"
+            : "translate(-50%, -50%) scale(0.8, 0.8)",
+      }}
+    />
+  );
+};
+
+const Portfolio = () => {
   const heroScrollRef = useRef(null);
   const nameRef = useRef(null);
   const topContentRef = useRef(null);
@@ -282,121 +398,9 @@ const Portfolio = () => {
     return () => window.removeEventListener('wheel', handleWheelSnap);
   }, []);
 
-  const flyingFrames = useMemo(() => sortSpritePaths(flyingSpriteModules), []);
-  const stillFrames = useMemo(
-    () => [...new Set([...sortSpritePaths(stillSpriteModules), ...sortSpritePaths(stillDirectorySpriteModules)])],
-    []
-  );
-  const sleepFrames = useMemo(() => sortSpritePaths(sleepSpriteModules), []);
-
-  const stillSprite = stillFrames[0] ?? flyingFrames[0] ?? "";
-  const sleepSprite = sleepFrames[0] ?? stillSprite;
-  const stillRadius = 150;
-  const chaseStartRadius = 160;
-
-  useEffect(() => {
-    const handleMouseMove = (event) => {
-      const nextPosition = { x: event.clientX, y: event.clientY };
-      cursorPositionRef.current = nextPosition;
-      setCursorPosition(nextPosition);
-    };
-
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, []);
-
-  useEffect(() => {
-    const handleResize = () => {
-      const center = getScreenCenter();
-      cursorPositionRef.current = center;
-      setCursorPosition(center);
-      setSpritePosition(center);
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  useEffect(() => {
-    let animationFrameId;
-
-    const animate = () => {
-      setSpritePosition((previousPosition) => {
-        if (isSleeping) {
-          return previousPosition;
-        }
-
-        const deltaX = cursorPositionRef.current.x - previousPosition.x;
-        const deltaY = cursorPositionRef.current.y - previousPosition.y;
-        const distance = Math.hypot(deltaX, deltaY);
-
-        const shouldStartChasing = distance > chaseStartRadius;
-        const shouldStopChasing = distance <= stillRadius;
-
-        if (!isChasingRef.current && shouldStartChasing) {
-          isChasingRef.current = true;
-          setIsChasing(true);
-        } else if (isChasingRef.current && shouldStopChasing) {
-          isChasingRef.current = false;
-          setIsChasing(false);
-        }
-
-        if (!isChasingRef.current) {
-          return previousPosition;
-        }
-
-        const movementStep = Math.min(distance, 3.5);
-        return {
-          x: previousPosition.x + (deltaX / distance) * movementStep,
-          y: previousPosition.y + (deltaY / distance) * movementStep,
-        };
-      });
-
-      animationFrameId = window.requestAnimationFrame(animate);
-    };
-
-    animationFrameId = window.requestAnimationFrame(animate);
-    return () => window.cancelAnimationFrame(animationFrameId);
-  }, [chaseStartRadius, stillRadius, isSleeping]);
-
-  useEffect(() => {
-    if (flyingFrames.length <= 1) {
-      return undefined;
-    }
-
-    const frameIntervalId = window.setInterval(() => {
-      setFrameIndex((previousFrame) => (previousFrame + 1) % flyingFrames.length);
-    }, 90);
-
-    return () => window.clearInterval(frameIntervalId);
-  }, [flyingFrames.length]);
-
-  const currentSprite = isSleeping
-    ? sleepSprite
-    : ((isChasing ? flyingFrames[frameIndex] : stillSprite) ?? stillSprite);
-  const shouldFlipSprite = cursorPosition.x > spritePosition.x;
-
   return (
     <div id='portfolio-container'>
-      {currentSprite && (
-        <img
-          src={currentSprite}
-          alt=""
-          className="t-sprite"
-          onClick={() => setIsSleeping((previousState) => !previousState)}
-          style={{
-            left: `${spritePosition.x}px`,
-            top: `${spritePosition.y}px`,
-            pointerEvents: "auto",
-            cursor: "pointer",
-            transform: isSleeping
-              ? "translate(-50%, -50%) scale(0.8)"
-              : shouldFlipSprite
-                ? "translate(-50%, -50%) scale(-0.8, 0.8)"
-                : "translate(-50%, -50%) scale(0.8, 0.8)",
-          }}
-        />
-      )}
+      <ChasingSprite />
       <img src={background} alt="" className="background-image"/>
       <Snowfall color="white" style={{
         position: "fixed"
@@ -480,8 +484,24 @@ const Portfolio = () => {
 
       {/* SKILLS SECTION */}
       <div className="skills-section section">
-        <h1 className="section-title">SKILL SET</h1>
-        <OrbitingCircle skills={orbitSkills} iconSize={60} radius={220} />
+        <motion.h1 
+          id="skill-section-title" 
+          className="section-title"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ duration: 1 }}
+        >
+          SKILL SET
+        </motion.h1>
+        <motion.div
+          initial={{ opacity: 0, y: 100 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1 }}
+          className="relative flex h-[560px] w-[560px] items-center justify-center overflow-visible"
+        >
+          <OrbitingCircle skills={outerOrbitSkills} iconSize={60} radius={220} duration={35} reverse={false} />
+          <OrbitingCircle skills={innerOrbitSkills} iconSize={60} radius={110} duration={20} reverse={true} />
+        </motion.div>
       </div>
 
 
@@ -491,11 +511,25 @@ const Portfolio = () => {
         <div className="projects-section">
           <div className="projects-left">
             <div className="projects-vertical-line"></div>
-            <h1 className="projects-title">PROJECTS</h1>
+            <motion.h1 
+              className="projects-title"
+              initial={{ opacity: 0, x: -100 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 1 }}
+            >
+              PROJECTS
+            </motion.h1>
           </div>
           <div className="projects-right">
             {PROJECTS.map((item) => (
-              <div className="project-card-wrapper" key={item.title}>
+              <motion.div 
+                className="project-card-wrapper" 
+                key={item.title}
+                initial={{ opacity: 0, x: 50, y: 50 }}
+                whileInView={{ opacity: 1, x: 0, y: 0 }}
+                transition={{ duration: 0.8 }}
+                viewport={{ once: true, amount: 0.2 }}
+              >
                 <ProjectCard
                   image={item.image}
                   title={item.title}
@@ -504,7 +538,7 @@ const Portfolio = () => {
                   description={item.description}
                   techStack={item.techStack}
                 />
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
@@ -512,20 +546,27 @@ const Portfolio = () => {
 
       {/* CONTACT SECTION */}
       <div className="contact-section">
-        <h1 className="contact-title">CONTACT ME</h1>
+        <motion.h1 
+          className="contact-title"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ duration: 1 }}
+        >
+          CONTACT ME
+        </motion.h1>
 
         <div className="contact-bottom">
           <div className="contact-bottom-left">
-            <h2 className="contact-heading-black">EMAIL</h2>
-            <h2 className="contact-heading-black">LINKEDIN</h2>
-            <h2 className="contact-heading-black">TWITTER</h2>
-            <h2 className="contact-heading-black">GITHUB</h2>
+            <motion.h2 className="contact-heading-black" initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.6 }}>EMAIL</motion.h2>
+            <motion.h2 className="contact-heading-black" initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }}>LINKEDIN</motion.h2>
+            <motion.h2 className="contact-heading-black" initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 1.0 }}>TWITTER</motion.h2>
+            <motion.h2 className="contact-heading-black" initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 1.2 }}>GITHUB</motion.h2>
           </div>
           <div className="contact-bottom-right">
-            <p className="contact-statement">got a project in mind?</p>
-            <p className="contact-statement">want to contact?</p>
-            <p className="contact-statement">My inbox is always open?</p>
-            <p className="contact-statement">Contact me!</p>
+            <motion.p className="contact-statement" initial={{ opacity: 0, x: 50 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.6 }}>got a project in mind?</motion.p>
+            <motion.p className="contact-statement" initial={{ opacity: 0, x: 50 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }}>want to contact?</motion.p>
+            <motion.p className="contact-statement" initial={{ opacity: 0, x: 50 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 1.0 }}>My inbox is always open?</motion.p>
+            <motion.p className="contact-statement" initial={{ opacity: 0, x: 50 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 1.2 }}>Contact me!</motion.p>
           </div>
         </div>
       </div>
