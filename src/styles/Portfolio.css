@@ -31,7 +31,19 @@ body {
   cursor: url("../assets/cursor/pokeball.png") 16 16, auto;
 }
 
-.cursor-chaser-sprite {
+.background-image{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+  z-index: -2;
+  will-change: filter;
+  opacity: 0.5;
+}
+
+.t-sprite {
   position: fixed;
   z-index: 20;
   pointer-events: auto;
@@ -56,7 +68,7 @@ body {
   align-items: center;
   padding: clamp(3rem, 8vw, 7rem) clamp(1.5rem, 6vw, 6rem);
   border-right: 1px solid var(--border);
-  /* optional: if part of a split layout */
+
   box-sizing: border-box;
   overflow: hidden;
 }
@@ -94,9 +106,11 @@ body {
 .hero_tag {
   font-family: var(--font-mono);
   font-size: 0.78rem;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: #fff;
+  background-color: var(--accent);
+  padding: 0.2em 0.75em;
   margin-bottom: 0.75rem;
 }
 
@@ -240,15 +254,17 @@ body {
   justify-content: center;
   align-items: center;
   background-color: transparent;
+  height: 100vh;
+  margin-top: 10vmin;
+  margin-bottom: 10vmin;
   color: var(--text-primary);
-  margin-bottom: 20vmin;
 }
 
 .skills-section {
   height: 100vh;
-  margin-bottom: 0;
+  margin-bottom: 12rem;
   padding: 2rem 0 1rem;
-  overflow: hidden;
+  /* overflow: hidden; */
 }
 
 .skills-section .section-title {
@@ -373,74 +389,96 @@ body {
 
 /* PROJECTS SECTION */
 
-.projects-container {
-  display: flex;
-  gap: 5vmin;
-  flex-wrap: wrap;
-  padding: 0 20px;
-}
-
-.projects-carousel-shell {
-  width: min(100%, 1320px);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 14px;
-}
-
-.projects-carousel-btn {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.45);
-  background: rgba(35, 35, 35, 0.8);
-  color: #fff;
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  transition: opacity 0.2s ease, border-color 0.2s ease;
-}
-
-.projects-carousel-btn.is-disabled {
-  opacity: 0.35;
-  border-color: rgba(255, 255, 255, 0.2);
-}
-
-.projects-carousel-viewport {
+.projects-section-container {
   width: 100%;
-  overflow-x: hidden;
-  overflow-y: visible;
-  padding-top: 12px;
+  background-color: black;
+  background: url("../assets/circuit_board_pattern.svg");
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  border-radius: 40px;
+  position: relative;
 }
 
-.projects-carousel-track {
+/* .projects-section-container::before {
+  content: '';
+  position: absolute;
+  top: -150px;
+  left: 0;
+  right: 0;
+  height: 150px;
+  background: #000000;
+background: linear-gradient(360deg, rgba(0, 0, 0, 1) 32%, rgba(0, 0, 0, 0.922) 51%, rgba(0, 0, 0, 0.927) 71%, rgba(255, 255, 255, 0) 100%);
+  pointer-events: none;
+  z-index: 1;
+} */
+
+.projects-section {
   display: flex;
-  transition: transform 0.35s ease;
+  flex-direction: row;
+  width: 100%;
+  max-width: 1500px;
+  margin: 0 auto;
+  align-items: flex-start;
+  position: relative;
 }
 
-.projects-carousel-slide {
-  flex: 0 0 calc(100% / var(--visible-project-cards, 3));
+.projects-left {
+  position: sticky;
+  top: 0;
+  width: 35%;
+  height: 100vh;
   display: flex;
+  align-items: center;
   justify-content: center;
-  padding: 0 10px;
+  padding-right: 5%;
+  gap: 3rem;
 }
 
-@media (max-width: 1120px) {
-  .projects-carousel-shell {
-    width: min(100%, 920px);
-  }
+.projects-vertical-line {
+  width: 2px;
+  min-width: 2px;
+  height: 100vh;
+  background-color: white;
+  flex-shrink: 0;
 }
 
-@media (max-width: 760px) {
-  .projects-carousel-shell {
-    width: min(100%, 520px);
-    gap: 8px;
-  }
+.projects-title {
+  font-family: var(--font-display);
+  font-size: clamp(4rem, 7vw, 7rem);
+  font-weight: bold;
+  color: white;
+  margin: 0;
+  letter-spacing: 5px;
+}
+
+.projects-right {
+  width: 65%;
+  display: flex;
+  flex-direction: column;
+  gap: 5rem;
+  padding: 50vh 0;
+  align-items: center;
 }
 
 @media (max-width: 1039px) {
-  .projects-container{
-    justify-content: center;
+  .projects-section {
+    flex-direction: column;
+  }
+  .projects-left {
+    position: static;
+    height: auto;
+    width: 100%;
+    padding: 4rem 0;
+  }
+  .projects-vertical-line {
+    height: 100px;
+  }
+  .projects-right {
+    width: 100%;
+    padding: 0;
+    gap: 3rem;
   }
 }
 
@@ -448,35 +486,84 @@ body {
 
 .contact-section {
   font-family: var(--font-mono);
-  margin: 0;
-  padding: 100px 0;
-  border-top: 2px solid rgba(255, 255, 255, 0.203);
+  padding: 100px 1vw;
   display: flex;
+  flex-direction: column;
   justify-content: center;
-  align-items: center;
+  width: 100%;
+  
+  background: url("../assets/world_map_background.svg");
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+  background-color: #faf5ef;
+  /* background-attachment: fixed; */
 }
 
-.contact-section-heading{
-  font-size: clamp(1rem, 5vw, 2rem);
+.contact-title {
+  font-family: var(--font-display);
+  font-size: clamp(4rem, 7vw, 7rem);
+  font-weight: bold;
+  color: black;
+  margin-bottom: 10vmin;
+  letter-spacing: 5px;
+  align-self: center;
 }
 
-.contact-icons-section {
+.contact-bottom {
   display: flex;
-  gap: 4vmin;
-  margin-top: 8vmin;
+  flex-direction: row;
+  width: 100%;
+  justify-items: end;
+  align-items: center;
+  margin-top: 2rem;
 }
 
-.contact-icons {
-  border: 1px solid var(--text-muted);
-  box-sizing: content-box;
-  padding: 15px;
-  border-radius: 50%;
-  cursor: pointer;
-  transition: all 300ms ease-in;
+.contact-bottom-left {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 50%;
+  align-items: flex-start;
+  text-align: left;
 }
 
-.contact-icons:hover {
-  background-color: var(--accent);
+.contact-heading-black {
+  color: black;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin: 0;
+  font-size: clamp(2.5rem, 4vw, 4rem);
+  line-height: 1.2;
+}
+
+.contact-bottom-right {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 50%;
+  align-items: flex-end;
+  justify-self: right;
+  text-align: right;
+}
+
+.contact-statement {
+  color: black;
+  margin: 0;
+  font-size: clamp(1.5rem, 2.5vw, 2.5rem);
+}
+
+@media (max-width: 768px) {
+  .contact-bottom {
+    flex-direction: column;
+    align-items: center;
+    gap: 4rem;
+  }
+  .contact-bottom-left, .contact-bottom-right {
+    width: 100%;
+    align-items: center;
+    text-align: center;
+  }
 }
 
 /* FOOTER SECTION */
