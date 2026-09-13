@@ -533,6 +533,14 @@ background: linear-gradient(360deg, rgba(0, 0, 0, 1) 32%, rgba(0, 0, 0, 0.922) 5
   margin: 0;
   font-size: clamp(2.5rem, 4vw, 4rem);
   line-height: 1.2;
+  text-decoration: none;
+  display: inline-block;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.contact-heading-black:hover {
+  opacity: 0.7;
 }
 
 .contact-bottom-right {
