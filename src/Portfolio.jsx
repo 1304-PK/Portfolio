@@ -18,6 +18,8 @@ import fastapi from "./assets/icons/fastapi.svg"
 import javascript from "./assets/icons/javascript.svg"
 import langchain from "./assets/icons/langchain.svg"
 import langgraph from "./assets/icons/langgraph.svg"
+import redis from "./assets/icons/redis.svg"
+import postman from "./assets/icons/postman.svg"
 import { FaGithub } from "react-icons/fa";
 import { FaLinkedin } from "react-icons/fa";
 import { FaTwitter } from "react-icons/fa";
@@ -30,11 +32,13 @@ import ScrollIndicator from "./components/ScrollIndicator";
 import civic_care from "./assets/civic_care.png"
 import adaptlearn from "./assets/adaptlearn.png"
 import lumineon from "./assets/lumineon.png"
+import workflow_orchestrator from "./assets/workflow_orchestrator.png"
 
 // IMPORT PROJECTS DATA
 import projectsData from "./data/projectsData.json";
 
 const PROJECT_IMAGE_MAP = {
+  workflowOrchestrator: workflow_orchestrator,
   civicCare: civic_care,
   adaptlearn: adaptlearn,
   lumineon: lumineon
@@ -52,7 +56,9 @@ const outerOrbitSkills = [
   { image: git, title: "Git" },
   { image: nodejs, title: "Node.js" },
   { image: mongodb, title: "MongoDB" },
-  { image: postgresql, title: "PostgreSQL" }
+  { image: postgresql, title: "PostgreSQL" },
+  { image: redis, title: "Redis" },
+  { image: postman, title: "Postman" }
 ];
 
 const innerOrbitSkills = [
@@ -558,9 +564,9 @@ const Portfolio = () => {
         <div className="contact-bottom">
           <div className="contact-bottom-left">
             <motion.h2 className="contact-heading-black" initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.6 }}>EMAIL</motion.h2>
-            <motion.h2 className="contact-heading-black" initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }}>LINKEDIN</motion.h2>
+            <motion.a href="https://www.linkedin.com/in/pushkar-kumar-singh-770a7536a/" target="_blank" rel="noopener noreferrer" className="contact-heading-black" initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }}>LINKEDIN</motion.a>
             <motion.h2 className="contact-heading-black" initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 1.0 }}>TWITTER</motion.h2>
-            <motion.h2 className="contact-heading-black" initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 1.2 }}>GITHUB</motion.h2>
+            <motion.a href="https://github.com/1304-PK" target="_blank" rel="noopener noreferrer" className="contact-heading-black" initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 1.2 }}>GITHUB</motion.a>
           </div>
           <div className="contact-bottom-right">
             <motion.p className="contact-statement" initial={{ opacity: 0, x: 50 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.6 }}>got a project in mind?</motion.p>
