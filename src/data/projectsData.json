@@ -1,5 +1,13 @@
 [
   {
+    "imageKey": "workflowOrchestrator",
+    "title": "Workflow Orchestrator",
+    "liveUrl": "dummy",
+    "githubUrl": "https://github.com/1304-PK/workflow-orchestrator",
+    "description": "Built a decoupled Node.js/Express DAG workflow engine with PostgreSQL-backed state persistence, concurrent worker pools, dependency resolution, transactional retries, and DLQ handling. Implemented Redis Pub/Sub and SSE for real-time task updates, along with a React dashboard using React Flow/ELK for interactive DAG visualization and live payload, error, and retry inspection.",
+    "techStack": ["React", "Node.js", "Express", "Redis", "Supabase", "JWT Auth", "ELK"]
+  },
+  {
     "imageKey": "lumineon",
     "title": "Lumineon",
     "liveUrl": "dummy",
